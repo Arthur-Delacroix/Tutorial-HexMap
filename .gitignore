@@ -1,6 +1,3 @@
-_site
-.sass-cache
-.jekyll-metadata
-.vscode
+_config.yml
+*.iml
 .idea
-.DS_Store

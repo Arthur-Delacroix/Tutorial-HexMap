@@ -1,0 +1,10 @@
+# Folders
+Library
+obj
+Packages
+.vs
+Temp
+ 
+# Files
+*.csproj
+*.sln

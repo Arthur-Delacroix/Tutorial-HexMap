@@ -3,7 +3,8 @@
 
 ![Progress](http://progressed.io/bar/10?title=progress)
 
-#### 完整GDD文档
+#### Game design document
+
 
 #### 编码及接口文档
 

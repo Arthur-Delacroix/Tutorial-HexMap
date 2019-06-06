@@ -8,3 +8,4 @@ Temp
 # Files
 *.csproj
 *.sln
+.DS_Store

@@ -1,4 +1,5 @@
-# Unity3D 五子棋游戏
+# FIaR
+Unity3D 跨平台 五子棋游戏
 ![release](https://img.shields.io/badge/Release-Ver.0.0.1-green.svg) ![license](https://img.shields.io/badge/License-MIT-blue.svg) ![Platform](https://img.shields.io/badge/Platform-iOS丨Android-blueviolet.svg)
 
 ![Progress](http://progressed.io/bar/10?title=progress)

@@ -1,9 +1,9 @@
 # Folders
 Library
 obj
-Packages
 .vs
 Temp
+Logs
  
 # Files
 *.csproj

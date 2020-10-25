@@ -8,7 +8,8 @@ public static class HexMetrics
     //正六边形的内切圆半径，长度为外接圆的 二分之根号三倍
     public const float innerRadius = outerRadius * 0.866025404f;
 
-    //正六边形的六个顶点位置，从最上面一个顶点开始，顺时针依次定义6个顶点
+    //正六边形的六个顶点位置，其姿态为角朝上，从最上面一个顶点开始计算位置
+    //根据正六边形中点的位置，顺时针依次定义6个顶点的位置
     public static Vector3[] corners =
     {
         new Vector3(0f, 0f, outerRadius),
@@ -19,4 +20,3 @@ public static class HexMetrics
         new Vector3(-innerRadius, 0f, 0.5f * outerRadius)
     };
 }
-

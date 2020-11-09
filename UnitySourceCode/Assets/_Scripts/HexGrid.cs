@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class HexGrid : MonoBehaviour
 {
@@ -14,8 +15,17 @@ public class HexGrid : MonoBehaviour
     //存放实例化的地图单元
     HexCell[] cells;
 
+    //存放显示地图单元坐标的Text Prefab
+    [SerializeField] private Text cellLabelPrefab;
+
+    //Text Prefab的父级Canvas
+    private Canvas gridCanvas;
+
     private void Awake()
     {
+        //获取Hex Grid子物体下d Canvas组件
+        gridCanvas = GetComponentInChildren<Canvas>();
+
         //根据长度和宽度，初始化数组大小
         cells = new HexCell[height * width];
 
@@ -52,5 +62,17 @@ public class HexGrid : MonoBehaviour
         //设置被实例化地图单元的父级和位置
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
+
+        //该变量用来存储被实例化的cellLabelPrefab预置
+        Text label = Instantiate<Text>(cellLabelPrefab);
+
+        //设置该label的父级，也就是canvas
+        label.rectTransform.SetParent(gridCanvas.transform, false);
+
+        //设置label的位置，与被实例化的cell位置相同
+        label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
+
+        //设置label的文字，就是cell在数组中的位置
+        label.text = x.ToString() + "\n" + z.ToString();
     }
 }

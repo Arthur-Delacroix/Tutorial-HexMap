@@ -47,11 +47,25 @@ public class HexGrid : MonoBehaviour
     /// <param name="i">地图单元在</param>
     private void CreateCell(int x, int z, int i)
     {
-        //声明一个Vector3，用来
+        //声明一个Vector3，根据这个Cell在数组中的位置，计算其在游戏场景中的实际位置
         Vector3 position;
-        position.x = x * 10f;
+
+        //position.x = x * 10f;//正方形Cell时，两个cell的水平间距
+        //position.x = x * (HexMetrics.innerRadius * 2f);//两个正六边形Cell中点的水平间距
+        //增加了Offset，每一行偏移量为行数*内切圆半径
+        //position.x = x * (HexMetrics.innerRadius * 2f) + z * (HexMetrics.innerRadius * 2f) * 0.5f;
+        //由上一个等式提取公因式得出：
+        //position.x = (x + z * 0.5f) * (HexMetrics.innerRadius * 2f);
+        //上一步中，生成的Cell会排列成菱形
+        //要排列成正方形，需要在偶数行去掉偏移量
+        //这里注意，Z/2只是取商，舍掉余数
+        //所以在偶数行正好抵消了偏移量，而在奇数行，z * 0.5f - z / 2 * (HexMetrics.innerRadius * 2f)正好是一个内切圆半径长度
+        position.x = (x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f);
+
         position.y = 0f;
-        position.z = z * 10f;
+
+        //position.z = z * 10f;////正方形Cell时，两个cell的垂直间距
+        position.z = z * (HexMetrics.outerRadius * 1.5f);//两个正六边形Cell中点的垂直间距
 
         //在数组cells的i位置实例化地图单元
         //cell用来给这个被实例化的单元设置父级和位置

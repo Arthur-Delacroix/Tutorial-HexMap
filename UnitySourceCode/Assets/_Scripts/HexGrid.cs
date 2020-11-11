@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+#pragma warning disable 649
+
 public class HexGrid : MonoBehaviour
 {
     //表示每一行有多少个地图单元
@@ -13,7 +15,7 @@ public class HexGrid : MonoBehaviour
     public HexCell cellPrefab;
 
     //存放实例化的地图单元
-    HexCell[] cells;
+    private HexCell[] cells;
 
     //存放显示地图单元坐标的Text Prefab
     [SerializeField] private Text cellLabelPrefab;
@@ -21,8 +23,14 @@ public class HexGrid : MonoBehaviour
     //Text Prefab的父级Canvas
     private Canvas gridCanvas;
 
+    //存储Hex Mesh物体上的hexMesh脚本组件
+    private HexMesh hexMesh;
+
     private void Awake()
     {
+        //获取Hex Mesh物体上的hexMesh脚本组件实例
+        hexMesh = GetComponentInChildren<HexMesh>();
+
         //获取Hex Grid子物体下d Canvas组件
         gridCanvas = GetComponentInChildren<Canvas>();
 
@@ -39,11 +47,17 @@ public class HexGrid : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        //调用绘制mesh的方法
+        hexMesh.Triangulate(cells);
+    }
+
     /// <summary>
     /// 创建一个地图单元
     /// </summary>
     /// <param name="x">地图单元是 横行中的第几个</param>
-    /// <param name="z">地图单元是 粽列中的第几个</param>
+    /// <param name="z">地图单元是 纵列中的第几个</param>
     /// <param name="i">地图单元在</param>
     private void CreateCell(int x, int z, int i)
     {

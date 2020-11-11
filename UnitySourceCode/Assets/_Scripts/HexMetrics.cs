@@ -17,6 +17,9 @@ public static class HexMetrics
         new Vector3(innerRadius, 0f, -0.5f * outerRadius),
         new Vector3(0f, 0f, -outerRadius),
         new Vector3(-innerRadius, 0f, -0.5f * outerRadius),
-        new Vector3(-innerRadius, 0f, 0.5f * outerRadius)
+        new Vector3(-innerRadius, 0f, 0.5f * outerRadius),
+        //正六边形其实只有6个顶点，但是当构建三角面片的时候，最后一个三角面片的顶点其实为：最后一个、第一个、中点，即corners[7]
+        //为了减少在循环中的判断，这里添加一条数据，防止索引越界即可
+        new Vector3(0f, 0f, outerRadius)
     };
 }

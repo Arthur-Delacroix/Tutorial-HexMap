@@ -91,6 +91,9 @@ public class HexGrid : MonoBehaviour
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
 
+        //在不改变cell排列的情况下，重新计算每个cell的坐标位置
+        cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
+
         //该变量用来存储被实例化的cellLabelPrefab预置
         Text label = Instantiate<Text>(cellLabelPrefab);
 
@@ -101,6 +104,9 @@ public class HexGrid : MonoBehaviour
         label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
 
         //设置label的文字，就是cell在数组中的位置
-        label.text = x.ToString() + "\n" + z.ToString();
+        //label.text = x.ToString() + "\n" + z.ToString();
+
+        //将转换后的坐标值复制给UGUI的Text组件，将它显示出来
+        label.text = cell.coordinates.ToStringOnSeparateLines();
     }
 }

@@ -3,15 +3,29 @@
 [System.Serializable]
 public struct HexCoordinates
 {
+    //用来显示在Inspector上cell坐标
+    [SerializeField]
+    private int x, z;
+
     //存储重新计算后的X坐标值
-    public int X { get; private set; }
+    //public int X { get; private set; }
+    public int X
+    {
+        get
+        {
+            return x;
+        }
+    }
+
 
     //存储重新计算后的Z坐标值
-    public int Z { get; private set; }
-
-    public int qaz(int a)
+    //public int Z { get; private set; }
+    public int Z
     {
-        return Z + a;
+        get
+        {
+            return z;
+        }
     }
 
     /// <summary>
@@ -21,8 +35,11 @@ public struct HexCoordinates
     /// <param name="z">为转换后的Z坐标赋初始值</param>
     public HexCoordinates(int x, int z)
     {
-        X = x;
-        Z = z;
+        //X = x;
+        //Z = z;
+
+        this.x = x;
+        this.z = z;
     }
 
     //计算Y的坐标值并存储下来

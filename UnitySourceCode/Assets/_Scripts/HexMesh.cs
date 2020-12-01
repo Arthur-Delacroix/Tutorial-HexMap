@@ -15,11 +15,17 @@ public class HexMesh : MonoBehaviour
     //索引，每个三角面片顶点的渲染顺序
     private List<int> triangles;
 
-    void Awake()
+    //为了检测射线碰撞Collider
+    private MeshCollider meshCollider;
+
+    private void Awake()
     {
         //初始化MeshFilter组件的，实例化hexMesh，并给其命名
         GetComponent<MeshFilter>().mesh = hexMesh = new Mesh();
         hexMesh.name = "Hex Mesh";
+
+        //为HexMesh物体添加MeshCollider组件
+        meshCollider = gameObject.AddComponent<MeshCollider>();
 
         //初始化vertices和triangles组件
         vertices = new List<Vector3>();
@@ -49,6 +55,8 @@ public class HexMesh : MonoBehaviour
 
         //重新计算法线方向，使得三角面片可以正确的显示出来
         hexMesh.RecalculateNormals();
+
+        meshCollider.sharedMesh = hexMesh;
     }
 
     /// <summary>

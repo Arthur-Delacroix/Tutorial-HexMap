@@ -53,6 +53,56 @@ public class HexGrid : MonoBehaviour
         hexMesh.Triangulate(cells);
     }
 
+    private void Update()
+    {
+        //之后鼠标点击交互相关代码会移动到其他脚本中
+        //检测鼠标左键是否点击
+        if (Input.GetMouseButtonUp(0))
+        {
+            HandleInput();
+        }
+    }
+
+    /// <summary>
+    /// 鼠标左键单击会调用此方法，以鼠标为发射点，经过主摄像机练成射线
+    /// 检测射线穿过Collider的位置
+    /// </summary>
+    private void HandleInput()
+    {
+        //射线起点为鼠标位置，经过主摄像机
+        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        //检测射线是否碰撞到了collider
+        RaycastHit hit;
+        if (Physics.Raycast(inputRay, out hit))
+        {
+            TouchCell(hit.point);
+        }
+    }
+
+    /// <summary>
+    /// 将射线的触碰点转换到自身的坐标系中
+    /// </summary>
+    /// <param name="position">触碰到的collider的位置</param>
+    private void TouchCell(Vector3 position)
+    {
+        //将触碰点的坐标系，转换到自身的坐标系
+        position = transform.InverseTransformPoint(position);
+
+        string strtmp= "原始坐标为" + position.ToString();
+        LoggerTool.LogMessage(strtmp);
+
+        //调用转换坐标的方法，定位具体点击到哪个cell上了
+        HexCoordinates coordinates = HexCoordinates.FromPosition(position);
+
+
+        //Debug.Log("touched at " + coordinates.ToString());
+
+        //Debug.Log("touched at " + position);
+        //Debug.Log("<color=#00FF00>原始坐标为" + position + "</color>");
+
+    }
+
     /// <summary>
     /// 创建一个地图单元
     /// </summary>

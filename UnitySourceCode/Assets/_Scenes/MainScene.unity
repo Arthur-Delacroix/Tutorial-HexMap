@@ -412,6 +412,8 @@ MonoBehaviour:
     type: 3}
   cellLabelPrefab: {fileID: 9029589587053216593, guid: ea3db1046ea710d4b9f9f0c28904d5da,
     type: 3}
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  touchedColor: {r: 1, g: 0, b: 1, a: 1}
 --- !u!4 &1119327825
 Transform:
   m_ObjectHideFlags: 0
@@ -491,7 +493,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: c0ac3ce1f15f74768acd4c2e5c885301, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

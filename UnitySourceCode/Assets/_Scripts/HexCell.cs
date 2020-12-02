@@ -6,7 +6,8 @@ public class HexCell : MonoBehaviour
     //针对每个cell，重新计算它的坐标值
     public HexCoordinates coordinates;
 
-
+    //存储cell自身的颜色
+    public Color color;
 
     //public Vector3 v1;
     //public Vector3 v2 { get; private set; }

@@ -26,6 +26,11 @@ public class HexGrid : MonoBehaviour
     //存储Hex Mesh物体上的hexMesh脚本组件
     private HexMesh hexMesh;
 
+    //cell的默认颜色
+    public Color defaultColor = Color.white;
+    //cell被点击后的颜色
+    public Color touchedColor = Color.magenta;
+
     private void Awake()
     {
         //获取Hex Mesh物体上的hexMesh脚本组件实例
@@ -90,10 +95,27 @@ public class HexGrid : MonoBehaviour
         position = transform.InverseTransformPoint(position);
 
         string strtmp= "原始坐标为" + position.ToString();
-        LoggerTool.LogMessage(strtmp);
+        //LoggerTool.LogMessage(strtmp);
 
         //调用转换坐标的方法，定位具体点击到哪个cell上了
         HexCoordinates coordinates = HexCoordinates.FromPosition(position);
+
+        //Debug.Log(coordinates.ToString());
+
+        //计算出cell位于cells[]数组中的位置
+        //在四边形网格中就是X+Z乘以宽度，但在这里还需要加上一半的Z轴偏移。????
+        int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
+
+        //Debug.Log(index);
+
+        //获取这个cell的实例
+        HexCell cell = cells[index];
+
+        //为这个cell赋值颜色
+        cell.color = touchedColor;
+
+        //重新构建整个map的mesh
+        hexMesh.Triangulate(cells);
 
 
         //Debug.Log("touched at " + coordinates.ToString());
@@ -143,6 +165,9 @@ public class HexGrid : MonoBehaviour
 
         //在不改变cell排列的情况下，重新计算每个cell的坐标位置
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
+
+        //为每个cell赋颜色初始值
+        cell.color = defaultColor;
 
         //该变量用来存储被实例化的cellLabelPrefab预置
         Text label = Instantiate<Text>(cellLabelPrefab);

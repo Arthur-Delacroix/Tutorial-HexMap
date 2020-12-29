@@ -62,28 +62,30 @@ public class HexGrid : MonoBehaviour
     {
         //之后鼠标点击交互相关代码会移动到其他脚本中
         //检测鼠标左键是否点击
-        if (Input.GetMouseButtonUp(0))
-        {
-            HandleInput();
-        }
+        //此方法移动到了HexMapEditor中
+        //if (Input.GetMouseButtonUp(0))
+        //{
+        //    HandleInput();
+        //}
     }
 
     /// <summary>
     /// 鼠标左键单击会调用此方法，以鼠标为发射点，经过主摄像机练成射线
     /// 检测射线穿过Collider的位置
+    /// 此方法移动到了HexMapEditor中
     /// </summary>
-    private void HandleInput()
-    {
-        //射线起点为鼠标位置，经过主摄像机
-        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //private void HandleInput()
+    //{
+    //    //射线起点为鼠标位置，经过主摄像机
+    //    Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        //检测射线是否碰撞到了collider
-        RaycastHit hit;
-        if (Physics.Raycast(inputRay, out hit))
-        {
-            TouchCell(hit.point);
-        }
-    }
+    //    //检测射线是否碰撞到了collider
+    //    RaycastHit hit;
+    //    if (Physics.Raycast(inputRay, out hit))
+    //    {
+    //        TouchCell(hit.point);
+    //    }
+    //}
 
     /// <summary>
     /// 将射线的触碰点转换到自身的坐标系中
@@ -94,7 +96,7 @@ public class HexGrid : MonoBehaviour
         //将触碰点的坐标系，转换到自身的坐标系
         position = transform.InverseTransformPoint(position);
 
-        string strtmp= "原始坐标为" + position.ToString();
+        //string strtmp= "原始坐标为" + position.ToString();
         //LoggerTool.LogMessage(strtmp);
 
         //调用转换坐标的方法，定位具体点击到哪个cell上了
@@ -117,12 +119,25 @@ public class HexGrid : MonoBehaviour
         //重新构建整个map的mesh
         hexMesh.Triangulate(cells);
 
-
         //Debug.Log("touched at " + coordinates.ToString());
 
         //Debug.Log("touched at " + position);
         //Debug.Log("<color=#00FF00>原始坐标为" + position + "</color>");
+    }
 
+    /// <summary>
+    /// 为被点击的cell赋值对应的颜色
+    /// </summary>
+    /// <param name="_position">鼠标点击hexmap的位置</param>
+    /// <param name="_color">选中的颜色</param>
+    public void ColorCell(Vector3 _position, Color _color)
+    {
+        _position = transform.InverseTransformPoint(_position);
+        HexCoordinates _coordinates = HexCoordinates.FromPosition(_position);
+        int _index = _coordinates.X + _coordinates.Z * width + _coordinates.Z / 2;
+        HexCell _cell = cells[_index];
+        _cell.color = _color;
+        hexMesh.Triangulate(cells);
     }
 
     /// <summary>

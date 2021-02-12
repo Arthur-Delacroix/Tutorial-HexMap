@@ -14,7 +14,7 @@ public class HexGrid : MonoBehaviour
     //存放地图单元格的预置
     public HexCell cellPrefab;
 
-    //存放实例化的地图单元
+    //存放所有实例化的地图单元
     private HexCell[] cells;
 
     //存放显示地图单元坐标的Text Prefab
@@ -145,7 +145,7 @@ public class HexGrid : MonoBehaviour
     /// </summary>
     /// <param name="x">地图单元是 横行中的第几个</param>
     /// <param name="z">地图单元是 纵列中的第几个</param>
-    /// <param name="i">地图单元在</param>
+    /// <param name="i">地图单元在cells数组中的索引</param>
     private void CreateCell(int x, int z, int i)
     {
         //声明一个Vector3，根据这个Cell在数组中的位置，计算其在游戏场景中的实际位置
@@ -183,6 +183,27 @@ public class HexGrid : MonoBehaviour
 
         //为每个cell赋颜色初始值
         cell.color = defaultColor;
+
+        //判断cell是否为每一行第一个
+        //如果不是第一个，则cell会有W方位相邻的cell，就可以建立E-W链接
+        if (x > 0)
+        {
+            //cells[i - 1]即为其左侧的cell
+            cell.SetNeighbor(HexDirection.W, cells[i - 1]);
+        }
+
+        //这里判断是否为第一行，因为行之间的链接会不太一样，尤其是第一行，需要做一次额外判断
+        if (z > 0)
+        {
+            //这里的&为位运算符 MSDN：https://docs.microsoft.com/zh-cn/dotnet/csharp/language-reference/operators/bitwise-and-shift-operators
+            //这里使用位运算符，判断是否为偶数行
+            if ((z & 1) == 0)
+            {
+                //当为偶数行的时候，创建SE方向的链接
+                //cells[1 - width]为SE方向的实例，图片参考 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/2-2-3.png
+                cell.SetNeighbor(HexDirection.SE, cells[1 - width]);
+            }
+        }
 
         //该变量用来存储被实例化的cellLabelPrefab预置
         Text label = Instantiate<Text>(cellLabelPrefab);

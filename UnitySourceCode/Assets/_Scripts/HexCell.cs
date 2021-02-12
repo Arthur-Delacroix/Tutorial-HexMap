@@ -32,6 +32,7 @@ public class HexCell : MonoBehaviour
     /// <param name="cell">相邻cell的实例</param>
     public void SetNeighbor(HexDirection direction, HexCell cell)
     {
+        //通过枚举索引，将相邻的cell放入自身数组中的相对应位置上
         neighbors[(int)direction] = cell;
 
         //在赋值自身的neighbors实例的同时，也将自身实例赋值到相邻cell的neighbors数组中

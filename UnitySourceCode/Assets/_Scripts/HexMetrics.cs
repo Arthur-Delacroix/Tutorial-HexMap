@@ -10,7 +10,7 @@ public static class HexMetrics
 
     //正六边形的六个顶点位置，其姿态为角朝上，从最上面一个顶点开始计算位置
     //根据正六边形中点的位置，顺时针依次定义6个顶点的位置
-    public static Vector3[] corners =
+    private static Vector3[] corners =
     {
         new Vector3(0f, 0f, outerRadius),
         new Vector3(innerRadius, 0f, 0.5f * outerRadius),
@@ -22,4 +22,24 @@ public static class HexMetrics
         //为了减少在循环中的判断，这里添加一条数据，防止索引越界即可
         new Vector3(0f, 0f, outerRadius)
     };
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <returns></returns>
+    public static Vector3 GetFirstCorner(HexDirection direction)
+    {
+        return corners[(int)direction];
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <returns></returns>
+    public static Vector3 GetSecondtCorner(HexDirection direction)
+    {
+        return corners[(int)direction + 1];
+    }
 }

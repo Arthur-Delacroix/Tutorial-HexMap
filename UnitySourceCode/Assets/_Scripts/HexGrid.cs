@@ -132,11 +132,18 @@ public class HexGrid : MonoBehaviour
     /// <param name="_color">选中的颜色</param>
     public void ColorCell(Vector3 _position, Color _color)
     {
+        //将鼠标点击的位置，转换到Hexmap的位置上，为unity坐标
         _position = transform.InverseTransformPoint(_position);
+        //将Unity坐标转换为Hexmap坐标
         HexCoordinates _coordinates = HexCoordinates.FromPosition(_position);
+        //通过计算的Hexmap坐计算出cell的索引
         int _index = _coordinates.X + _coordinates.Z * width + _coordinates.Z / 2;
+        //通过索引在cells数组中找到这个cell的实例
         HexCell _cell = cells[_index];
+        //为这个cell的实例赋值颜色
         _cell.color = _color;
+        //重新构建所有的cell
+        //这里注意，每次进行颜色的改变，都会重新构建整个cells数组，这个遗留问题之后会修正
         hexMesh.Triangulate(cells);
     }
 
@@ -184,6 +191,7 @@ public class HexGrid : MonoBehaviour
         //为每个cell赋颜色初始值
         cell.color = defaultColor;
 
+        //以下为将 周围cell与自身相链接的代码部分----------------------------------------
         //判断cell是否为每一行第一个
         //如果不是第一个，则cell会有W方位相邻的cell，就可以建立E-W链接
         if (x > 0)
@@ -192,16 +200,41 @@ public class HexGrid : MonoBehaviour
             cell.SetNeighbor(HexDirection.W, cells[i - 1]);
         }
 
-        //这里判断是否为第一行，因为行之间的链接会不太一样，尤其是第一行，需要做一次额外判断
+        //因为偶数行和奇数行的链接关系不同，所以要分开进行判断
+        //注意，这里行数索引是从0开始，也就是说，实际看到的第一行索引是0，也就是说起始是偶数行
+        //在使用SetNeighbor方法进行cell的链接时，自身和对应cell会相互建立连接
+        //所以，这里选择除了第一行，其他行都只进行SE和SW方向的链接，再加上之前的W方向，其实就完成了所有6个方向的相互链接
+        //图片参考 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/2-2-3.png
+        //这里还有一点，要注意cell的“索引”和“坐标”！这两个数值是计算链接的关键数值！
         if (z > 0)
         {
             //这里的&为位运算符 MSDN：https://docs.microsoft.com/zh-cn/dotnet/csharp/language-reference/operators/bitwise-and-shift-operators
             //这里使用位运算符，判断是否为偶数行
             if ((z & 1) == 0)
             {
-                //当为偶数行的时候，创建SE方向的链接
-                //cells[1 - width]为SE方向的实例，图片参考 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/2-2-3.png
-                cell.SetNeighbor(HexDirection.SE, cells[1 - width]);
+                //当为偶数行的时候，创建 SE-NW 方向的链接
+                //cells[i - width]为SE方向的实例，也就是右下方的cell
+                cell.SetNeighbor(HexDirection.SE, cells[i - width]);
+
+                //每行的第一个cell是没有左下角(SW)方向的链接，这里要判断cell是否为第一个
+                if (x > 0)
+                {
+                    //cells[i - width - 1]为SW方向的实例，也就是左下方的cell，创建SW-NE方向的链接
+                    cell.SetNeighbor(HexDirection.SW, cells[i - width - 1]);
+                }
+            }
+            //这里是奇数行建立链接的部分
+            else
+            {
+                //i - width 为自身SW方向的实例
+                cell.SetNeighbor(HexDirection.SW, cells[i - width]);
+
+                //判断奇数行cell是否为每行最后一个，因为奇数行最后一个cell是没有SE方向的实例
+                if (x < width - 1)
+                {
+                    //i - width + 1 为奇数行自身SE方向的实例
+                    cell.SetNeighbor(HexDirection.SE, cells[i - width + 1]);
+                }
             }
         }
 

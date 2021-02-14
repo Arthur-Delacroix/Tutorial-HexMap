@@ -51,15 +51,10 @@ public class HexMesh : MonoBehaviour
         colors.Clear();
 
         //依次读取数组中的Hex Cell实例，录入每个Hex Cell的顶点信息
-        //for (int i = 0; i < cells.Length; i++)
-        //{
-        //    Triangulate(cells[i]);
-        //}
-        //for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
-        //{
-        //    Triangulate(d, cell)
-        //}
-
+        for (int i = 0; i < cells.Length; i++)
+        {
+            Triangulate(cells[i]);
+        }
 
         //将所有的顶点位置信息，顶点位置信息的索引存储到链表中
         hexMesh.vertices = vertices.ToArray();
@@ -72,6 +67,19 @@ public class HexMesh : MonoBehaviour
         hexMesh.RecalculateNormals();
 
         meshCollider.sharedMesh = hexMesh;
+    }
+
+    /// <summary>
+    /// 使用HexDirection方位，为单个cell循环添加其6个顶点信息
+    /// 此方法之后会进行优化合并
+    /// </summary>
+    /// <param name="cell">单个cell的实例</param>
+    private void Triangulate(HexCell cell)
+    {
+        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+        {
+            Triangulate(d, cell);
+        }
     }
 
     /// <summary>
@@ -92,19 +100,21 @@ public class HexMesh : MonoBehaviour
         //);
 
         //根据中点位置计算出其余的顶点位置信息，并按照顺序构建三角面片
-        for (int i = 0; i< 6; i++)
+        for (int i = 0; i < 6; i++)
         {
             //构建三角面片
             AddTriangle(
                 center,
+                //因为有了HexDirection，这里不再直接使用corners枚举来获取cell的顶点位置信息，而使用HexDirection方位来获取
                 //center + HexMetrics.corners[i],
                 //center + HexMetrics.corners[i + 1]
-                //center+HexMetrics
+                center + HexMetrics.GetFirstCorner(direction),
+                center + HexMetrics.GetSecondtCorner(direction)
             );
 
-    //为三角面片的顶点赋颜色值
-    AddTriangleColor(cell.color);
-}
+            //为三角面片的顶点赋颜色值
+            AddTriangleColor(cell.color);
+        }
     }
 
     /// <summary>
@@ -112,31 +122,31 @@ public class HexMesh : MonoBehaviour
     /// </summary>
     /// <param name="color">三角面片顶点的颜色信息</param>
     private void AddTriangleColor(Color color)
-{
-    colors.Add(color);
-    colors.Add(color);
-    colors.Add(color);
-}
+    {
+        colors.Add(color);
+        colors.Add(color);
+        colors.Add(color);
+    }
 
-/// <summary>
-/// 添加单个三角面片的顶点位置信息和索引
-/// </summary>
-/// <param name="v1">顺时针 第一个顶点的Vector3</param>
-/// <param name="v2">顺时针 第二个顶点的Vector3</param>
-/// <param name="v3">顺时针 第三个顶点的Vector3</param>
-private void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v3)
-{
-    //获取当前vertices链表中已经录入的数量
-    int vertexIndex = vertices.Count;
+    /// <summary>
+    /// 添加单个三角面片的顶点位置信息和索引
+    /// </summary>
+    /// <param name="v1">顺时针 第一个顶点的Vector3</param>
+    /// <param name="v2">顺时针 第二个顶点的Vector3</param>
+    /// <param name="v3">顺时针 第三个顶点的Vector3</param>
+    private void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v3)
+    {
+        //获取当前vertices链表中已经录入的数量
+        int vertexIndex = vertices.Count;
 
-    //在vertices链表中添加新增的顶点位置信息
-    vertices.Add(v1);
-    vertices.Add(v2);
-    vertices.Add(v3);
+        //在vertices链表中添加新增的顶点位置信息
+        vertices.Add(v1);
+        vertices.Add(v2);
+        vertices.Add(v3);
 
-    //在triangles链表中添加新增顶点信息的索引
-    triangles.Add(vertexIndex);
-    triangles.Add(vertexIndex + 1);
-    triangles.Add(vertexIndex + 2);
-}
+        //在triangles链表中添加新增顶点信息的索引
+        triangles.Add(vertexIndex);
+        triangles.Add(vertexIndex + 1);
+        triangles.Add(vertexIndex + 2);
+    }
 }

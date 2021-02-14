@@ -24,9 +24,9 @@ public static class HexMetrics
     };
 
     /// <summary>
-    /// 
+    /// 获取cell的direction位置的顶点
     /// </summary>
-    /// <param name="direction"></param>
+    /// <param name="direction">顶点方位</param>
     /// <returns></returns>
     public static Vector3 GetFirstCorner(HexDirection direction)
     {
@@ -34,9 +34,9 @@ public static class HexMetrics
     }
 
     /// <summary>
-    /// 
+    /// 获取cell的direction+1位置的顶点
     /// </summary>
-    /// <param name="direction"></param>
+    /// <param name="direction">顶点方位</param>
     /// <returns></returns>
     public static Vector3 GetSecondtCorner(HexDirection direction)
     {

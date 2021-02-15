@@ -93,39 +93,55 @@ public class HexMesh : MonoBehaviour
         Vector3 center = cell.transform.localPosition;
 
         //根据中点位置计算出其余两个顶点的信息
-        //AddTriangle(
-        //    center,
-        //    center + HexMetrics.corners[0],
-        //    center + HexMetrics.corners[1]
-        //);
+        AddTriangle(
+            center,
+            center + HexMetrics.GetFirstCorner(direction),
+            center + HexMetrics.GetSecondCorner(direction)
+        );
 
+        //因为有了HexDirection，这里不再直接使用corners枚举来获取cell的顶点位置信息，而使用HexDirection方位来获取
         //根据中点位置计算出其余的顶点位置信息，并按照顺序构建三角面片
-        for (int i = 0; i < 6; i++)
-        {
-            //构建三角面片
-            AddTriangle(
-                center,
-                //因为有了HexDirection，这里不再直接使用corners枚举来获取cell的顶点位置信息，而使用HexDirection方位来获取
-                //center + HexMetrics.corners[i],
-                //center + HexMetrics.corners[i + 1]
-                center + HexMetrics.GetFirstCorner(direction),
-                center + HexMetrics.GetSecondtCorner(direction)
-            );
+        //for (int i = 0; i < 6; i++)
+        //{
+        //    //构建三角面片
+        //    AddTriangle(
+        //        center,
+        //        center + HexMetrics.corners[i],
+        //        center + HexMetrics.corners[i + 1]
+        //    );
+        //}
 
-            //为三角面片的顶点赋颜色值
-            AddTriangleColor(cell.color);
-        }
+        //获取与自身当前相邻的cell的颜色值
+        //每个cell会在 Triangulate(HexCell cell) 方法中将与自身相邻的cell遍历一次
+        //?? 为 可空合并运算符，即cell.GetNeighbor(direction)的值为null时，使用 cell的值
+        HexCell neighbor = cell.GetNeighbor(direction) ?? cell;
+
+        //为三角面片的顶点赋颜色值
+        AddTriangleColor(cell.color, neighbor.color, neighbor.color);
     }
 
     /// <summary>
     /// 为每个三角面片的3个顶点赋颜色值
     /// </summary>
     /// <param name="color">三角面片顶点的颜色信息</param>
-    private void AddTriangleColor(Color color)
+    //private void AddTriangleColor(Color color)
+    //{
+    //    colors.Add(color);
+    //    colors.Add(color);
+    //    colors.Add(color);
+    //}
+
+    /// <summary>
+    /// 为每个三角面片的3个顶点分别赋予不同的颜色值
+    /// </summary>
+    /// <param name="c1">第一个顶点的颜色信息(中心点的颜色)</param>
+    /// <param name="c2">第二个顶点的颜色信息</param>
+    /// <param name="c3">第三个顶点的颜色信息</param>
+    private void AddTriangleColor(Color c1, Color c2, Color c3)
     {
-        colors.Add(color);
-        colors.Add(color);
-        colors.Add(color);
+        colors.Add(c1);
+        colors.Add(c2);
+        colors.Add(c3);
     }
 
     /// <summary>

@@ -38,7 +38,7 @@ public static class HexMetrics
     /// </summary>
     /// <param name="direction">顶点方位</param>
     /// <returns></returns>
-    public static Vector3 GetSecondtCorner(HexDirection direction)
+    public static Vector3 GetSecondCorner(HexDirection direction)
     {
         return corners[(int)direction + 1];
     }

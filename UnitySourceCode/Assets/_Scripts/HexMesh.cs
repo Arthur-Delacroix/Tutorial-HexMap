@@ -111,13 +111,45 @@ public class HexMesh : MonoBehaviour
         //    );
         //}
 
+        //获取当前相邻方位cell，索引值-1相邻cell的实例
+        HexCell prevNeighbor = cell.GetNeighbor(direction.Previous()) ?? cell;
+
         //获取与自身当前相邻的cell的颜色值
         //每个cell会在 Triangulate(HexCell cell) 方法中将与自身相邻的cell遍历一次
         //?? 为 可空合并运算符，即cell.GetNeighbor(direction)的值为null时，使用 cell的值
         HexCell neighbor = cell.GetNeighbor(direction) ?? cell;
 
+        //获取当前相邻方位cell，索引值+1相邻cell的实例
+        HexCell nextNeighbor = cell.GetNeighbor(direction.Next()) ?? cell;
+
+        //将 ?? 替换为了 if/else 判断
+        //HexCell neighbor = null;
+        //if (cell.GetNeighbor(direction) != null)
+        //{
+        //    neighbor = cell.GetNeighbor(direction);
+        //}
+        //else
+        //{
+        //    neighbor = cell;
+        //}
+
+        //两个相邻的cell，其交界处的颜色应该是两个cell颜色的平均值
+        //Color edgeColor = (cell.color + neighbor.color) * 0.5f;
+
         //为三角面片的顶点赋颜色值
-        AddTriangleColor(cell.color, neighbor.color, neighbor.color);
+        //AddTriangleColor(cell.color, neighbor.color, neighbor.color);
+        //AddTriangleColor(cell.color, edgeColor, edgeColor);
+
+        //获取到相邻方位cell，以及相邻方位cell +1和-1 cell的实例，接下来进行颜色混合
+        //三角面片3个顶点颜色分别为
+        //自身颜色
+        //自身颜色，自身颜色+相邻cell方位减1颜色，相邻cell颜色
+        //自身颜色，自身颜色+相邻cell方位加1颜色，相邻cell颜色
+        AddTriangleColor(
+            cell.color,
+            (cell.color+prevNeighbor.color+neighbor.color)/3.0f,
+            (cell.color+nextNeighbor.color+neighbor.color)/3.0f
+            );
     }
 
     /// <summary>

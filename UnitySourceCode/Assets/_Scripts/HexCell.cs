@@ -15,7 +15,7 @@ public class HexCell : MonoBehaviour
     /// <summary>
     /// 用来获取neighbors中相应方位cell的实例
     /// 这里注意，虽然HexDirection取值为0-5，neighbors长度为6，不会越界
-    /// 但是不是所有cell都有6个相邻的cell_neighbor，所以可能取出为空，之后会添加判断
+    /// 但是不是所有cell都有6个相邻的cell_neighbor，所以可能取出为空，在取值时候会添加判断
     /// </summary>
     /// <param name="direction">相邻cell的方位 枚举</param>
     /// <returns>相应方位cell 的实例</returns>

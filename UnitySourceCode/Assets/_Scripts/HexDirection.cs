@@ -37,4 +37,27 @@ public static class HexDirectionExtensions
             return (direction - 3);
         }
     }
+
+    /// <summary>
+    /// 获取当前相邻cell 之前的一个cell的方位
+    /// </summary>
+    /// <param name="direction">当前相邻cell的方位</param>
+    /// <returns></returns>
+    public static HexDirection Previous(this HexDirection direction)
+    {
+        //如果当前cell位置为NE，即索引为0，其之前的一个cell方位应该为NE，即索引为6
+        //除此之外的情况，只要当前索引值减1即可
+        return direction == HexDirection.NE ? HexDirection.NW : (direction - 1);
+    }
+
+    /// <summary>
+    /// 获取当前相邻cell 之后的一个cell的方位
+    /// </summary>
+    /// <param name="direction">当前相邻cell的方位</param>
+    /// <returns></returns>
+    public static HexDirection Next(this HexDirection direction)
+    {
+        //与Previous方法中类似，方位索引为6时，回到0，其余情况则方位索引加1
+        return direction == HexDirection.NW ? HexDirection.NE : (direction + 1);
+    }
 }

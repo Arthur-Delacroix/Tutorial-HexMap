@@ -8,6 +8,12 @@ public static class HexMetrics
     //正六边形的内切圆半径，长度为外接圆的 二分之根号三倍
     public const float innerRadius = outerRadius * 0.866025404f;
 
+    //cell自身颜色区域，为75%外接圆半径
+    public const float solidFactor = 0.75f;
+
+    //cell的颜色混合区域，为25%外接圆半径
+    public const float blendFactor = 1f - solidFactor;
+
     //正六边形的六个顶点位置，其姿态为角朝上，从最上面一个顶点开始计算位置
     //根据正六边形中点的位置，顺时针依次定义6个顶点的位置
     private static Vector3[] corners =
@@ -41,5 +47,25 @@ public static class HexMetrics
     public static Vector3 GetSecondCorner(HexDirection direction)
     {
         return corners[(int)direction + 1];
+    }
+
+    /// <summary>
+    /// 获取cell自身颜色区域的direction位置的顶点
+    /// </summary>
+    /// <param name="direction">顶点方位</param>
+    /// <returns></returns>
+    public static Vector3 GetFirstSolidCorner(HexDirection direction)
+    {
+        return corners[(int)direction] * solidFactor;
+    }
+
+    /// <summary>
+    /// 获取cell自身颜色区域的direction+1位置的顶点
+    /// </summary>
+    /// <param name="direction">顶点方位</param>
+    /// <returns></returns>
+    public static Vector3 GetSecondSolidCorner(HexDirection direction)
+    {
+        return corners[(int)direction + 1] * solidFactor;
     }
 }

@@ -95,8 +95,12 @@ public class HexMesh : MonoBehaviour
         //根据中点位置计算出其余两个顶点的信息
         AddTriangle(
             center,
-            center + HexMetrics.GetFirstCorner(direction),
-            center + HexMetrics.GetSecondCorner(direction)
+            //center + HexMetrics.GetFirstCorner(direction),
+            //center + HexMetrics.GetSecondCorner(direction)
+
+            //因为将颜色混合区域、cell自身颜色区域分开了，这里首先构建cell自身颜色区域的三角面片
+            center + HexMetrics.GetFirstSolidCorner(direction),
+            center + HexMetrics.GetSecondSolidCorner(direction)
         );
 
         //因为有了HexDirection，这里不再直接使用corners枚举来获取cell的顶点位置信息，而使用HexDirection方位来获取

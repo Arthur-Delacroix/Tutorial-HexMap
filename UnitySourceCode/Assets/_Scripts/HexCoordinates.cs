@@ -172,7 +172,6 @@ public struct HexCoordinates
         //LoggerTool.LogColorMessage("#0000ffff", s_iy);
         //LoggerTool.LogColorMessage("#0000ffff", s_iz);
 
-
         return new HexCoordinates(iX, iZ);
     }
 }

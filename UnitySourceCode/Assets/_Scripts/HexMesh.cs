@@ -92,6 +92,14 @@ public class HexMesh : MonoBehaviour
         //获取单个cell的中点位置
         Vector3 center = cell.transform.localPosition;
 
+        //这两个Vector3变量，是新的cell自身颜色区域中，两个新的顶点信息，其每个顶点距离cell中心为75%外接圆半径
+        Vector3 v1 = center + HexMetrics.GetFirstSolidCorner(direction);
+        Vector3 v2 = center + HexMetrics.GetSecondSolidCorner(direction);
+
+        //这两个Vector3变量，是原本构成cell一个三角面片的其中两个顶点位置。现在是颜色混合区域的两个顶点位置。
+        Vector3 v3 = center + HexMetrics.GetFirstCorner(direction);
+        Vector3 v4 = center + HexMetrics.GetSecondCorner(direction);
+
         //根据中点位置计算出其余两个顶点的信息
         AddTriangle(
             center,
@@ -99,9 +107,15 @@ public class HexMesh : MonoBehaviour
             //center + HexMetrics.GetSecondCorner(direction)
 
             //因为将颜色混合区域、cell自身颜色区域分开了，这里首先构建cell自身颜色区域的三角面片
-            center + HexMetrics.GetFirstSolidCorner(direction),
-            center + HexMetrics.GetSecondSolidCorner(direction)
+            //center + HexMetrics.GetFirstSolidCorner(direction),
+            //center + HexMetrics.GetSecondSolidCorner(direction)
+
+            //使用声明的新变量，替换之前计算得出的结果
+            v1, v2
         );
+
+        //将计算好的颜色混合区域定点位置信息，添加到添加到链表中
+        AddQuad(v1, v2, v3, v4);
 
         //因为有了HexDirection，这里不再直接使用corners枚举来获取cell的顶点位置信息，而使用HexDirection方位来获取
         //根据中点位置计算出其余的顶点位置信息，并按照顺序构建三角面片
@@ -149,10 +163,22 @@ public class HexMesh : MonoBehaviour
         //自身颜色
         //自身颜色，自身颜色+相邻cell方位减1颜色，相邻cell颜色
         //自身颜色，自身颜色+相邻cell方位加1颜色，相邻cell颜色
-        AddTriangleColor(
+        //AddTriangleColor(
+        //    cell.color,
+        //    (cell.color + prevNeighbor.color + neighbor.color) / 3.0f,
+        //    (cell.color + nextNeighbor.color + neighbor.color) / 3.0f
+        //    );
+
+        //这里为cell的三角面片每个顶点赋值颜色，因为cell自身不再参与颜色混合，所以只有自身颜色
+        AddTriangleColor(cell.color);
+
+        //为颜色混合区域的4个顶点分别赋值颜色
+        //其中v1 v2是cell自身颜色，v3 v4是混合后的颜色
+        AddQuadColor(
             cell.color,
-            (cell.color+prevNeighbor.color+neighbor.color)/3.0f,
-            (cell.color+nextNeighbor.color+neighbor.color)/3.0f
+            cell.color,
+            (cell.color + prevNeighbor.color + neighbor.color) / 3.0f,
+            (cell.color + nextNeighbor.color + neighbor.color) / 3.0f
             );
     }
 
@@ -160,12 +186,12 @@ public class HexMesh : MonoBehaviour
     /// 为每个三角面片的3个顶点赋颜色值
     /// </summary>
     /// <param name="color">三角面片顶点的颜色信息</param>
-    //private void AddTriangleColor(Color color)
-    //{
-    //    colors.Add(color);
-    //    colors.Add(color);
-    //    colors.Add(color);
-    //}
+    private void AddTriangleColor(Color color)
+    {
+        colors.Add(color);
+        colors.Add(color);
+        colors.Add(color);
+    }
 
     /// <summary>
     /// 为每个三角面片的3个顶点分别赋予不同的颜色值
@@ -200,5 +226,49 @@ public class HexMesh : MonoBehaviour
         triangles.Add(vertexIndex);
         triangles.Add(vertexIndex + 1);
         triangles.Add(vertexIndex + 2);
+    }
+
+    /// <summary>
+    /// 创建颜色混合区域的三角面片定点信息和索引，这个区域是一个四边形，所以有4个顶点
+    /// 参考图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/2-7-1.png
+    /// </summary>
+    /// <param name="v1">三角面片第一个顶点位置信息</param>
+    /// <param name="v2">三角面片第二个顶点位置信息</param>
+    /// <param name="v3">三角面片第三个顶点位置信息</param>
+    /// <param name="v4">三角面片第四个顶点位置信息</param>
+    private void AddQuad(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4)
+    {
+        //获取当前vertices链表中已经录入的数量
+        int vertexIndex = vertices.Count;
+
+        //在vertices链表中添加新增的顶点位置信息
+        vertices.Add(v1);
+        vertices.Add(v2);
+        vertices.Add(v3);
+        vertices.Add(v4);
+
+        //在triangles链表中添加新增顶点信息的索引
+        //两个三角面片组成了颜色混合区域，分别为：V1V3V2 和 V2V3V4
+        triangles.Add(vertexIndex);
+        triangles.Add(vertexIndex + 2);
+        triangles.Add(vertexIndex + 1);
+        triangles.Add(vertexIndex + 1);
+        triangles.Add(vertexIndex + 2);
+        triangles.Add(vertexIndex + 3);
+    }
+
+    /// <summary>
+    /// 为四边形颜色混合区域的每个顶点赋值颜色
+    /// </summary>
+    /// <param name="c1">第一个顶点的颜色信息</param>
+    /// <param name="c2">第二个顶点的颜色信息</param>
+    /// <param name="c3">第三个顶点的颜色信息</param>
+    /// <param name="c4">第四个顶点的颜色信息</param>
+    private void AddQuadColor(Color c1, Color c2, Color c3, Color c4)
+    {
+        colors.Add(c1);
+        colors.Add(c2);
+        colors.Add(c3);
+        colors.Add(c4);
     }
 }

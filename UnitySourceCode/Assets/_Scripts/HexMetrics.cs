@@ -68,4 +68,19 @@ public static class HexMetrics
     {
         return corners[(int)direction + 1] * solidFactor;
     }
+
+    /// <summary>
+    /// 获取矩形混合区域中，内边缘顶点到外边缘顶点的距离
+    /// </summary>
+    /// <param name="direction">顶点方位</param>
+    /// <returns></returns>
+    public static Vector3 GetBridge(HexDirection direction)
+    {
+        //参考图片 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/2-8-1.png
+        //(corners[(int)direction] + corners[(int)direction + 1]) * 0.5f 是得出cell相邻两个顶点所连线的中点的位置
+        //其实也就是内切圆和cell相切的一个切点，也就是线段V3V4的中点，其实也是角∠(V1 center v2)的角平分线
+        //具体可以看图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/1-1-3.png 来理解
+        //得出V3 V4中点位置后，再乘以颜色混合区域所占比例，即25%，得出V1到V3的距离
+        return (corners[(int)direction] + corners[(int)direction + 1]) * 0.5f * blendFactor;
+    }
 }

@@ -97,8 +97,14 @@ public class HexMesh : MonoBehaviour
         Vector3 v2 = center + HexMetrics.GetSecondSolidCorner(direction);
 
         //这两个Vector3变量，是原本构成cell一个三角面片的其中两个顶点位置。现在是颜色混合区域的两个顶点位置。
-        Vector3 v3 = center + HexMetrics.GetFirstCorner(direction);
-        Vector3 v4 = center + HexMetrics.GetSecondCorner(direction);
+        //Vector3 v3 = center + HexMetrics.GetFirstCorner(direction);
+        //Vector3 v4 = center + HexMetrics.GetSecondCorner(direction);
+
+        //颜色混合区域变为了矩形，V3和V4的位置，其实是通过V1和V2顶点分别加上矩形区域的高来计算得出的
+        //具体可以查看HexMetrics.GetBridge方法的说明
+        Vector3 bridge = HexMetrics.GetBridge(direction);
+        Vector3 v3 = v1 + bridge;
+        Vector3 v4 = v2 + bridge;
 
         //根据中点位置计算出其余两个顶点的信息
         AddTriangle(
@@ -174,12 +180,15 @@ public class HexMesh : MonoBehaviour
 
         //为颜色混合区域的4个顶点分别赋值颜色
         //其中v1 v2是cell自身颜色，v3 v4是混合后的颜色
-        AddQuadColor(
-            cell.color,
-            cell.color,
-            (cell.color + prevNeighbor.color + neighbor.color) / 3.0f,
-            (cell.color + nextNeighbor.color + neighbor.color) / 3.0f
-            );
+        //AddQuadColor(
+        //    cell.color,
+        //    cell.color,
+        //    (cell.color + prevNeighbor.color + neighbor.color) / 3.0f,
+        //    (cell.color + nextNeighbor.color + neighbor.color) / 3.0f
+        //    );
+
+        //新的矩形颜色混合区域顶点颜色赋值
+        AddQuadColor(cell.color, (cell.color + neighbor.color) * 0.5f);
     }
 
     /// <summary>
@@ -264,11 +273,25 @@ public class HexMesh : MonoBehaviour
     /// <param name="c2">第二个顶点的颜色信息</param>
     /// <param name="c3">第三个顶点的颜色信息</param>
     /// <param name="c4">第四个顶点的颜色信息</param>
-    private void AddQuadColor(Color c1, Color c2, Color c3, Color c4)
+    //private void AddQuadColor(Color c1, Color c2, Color c3, Color c4)
+    //{
+    //    colors.Add(c1);
+    //    colors.Add(c2);
+    //    colors.Add(c3);
+    //    colors.Add(c4);
+    //}
+
+    /// <summary>
+    /// 为四边形颜色混合区域的每个顶点赋值颜色
+    /// 因为该区域只负责混合2个cell的颜色，所以4个顶点只需要2个颜色
+    /// </summary>
+    /// <param name="c1">cell祖神颜色</param>
+    /// <param name="c2">混合后的颜色</param>
+    private void AddQuadColor(Color c1, Color c2)
     {
         colors.Add(c1);
+        colors.Add(c1);
         colors.Add(c2);
-        colors.Add(c3);
-        colors.Add(c4);
+        colors.Add(c2);
     }
 }

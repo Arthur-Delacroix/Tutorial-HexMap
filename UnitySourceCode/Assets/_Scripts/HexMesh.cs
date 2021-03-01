@@ -187,8 +187,33 @@ public class HexMesh : MonoBehaviour
         //    (cell.color + nextNeighbor.color + neighbor.color) / 3.0f
         //    );
 
+        //矩形两色混合区域的中间过渡色
+        Color bridgeColor = (cell.color + neighbor.color) * 0.5f;
+
         //新的矩形颜色混合区域顶点颜色赋值
-        AddQuadColor(cell.color, (cell.color + neighbor.color) * 0.5f);
+        AddQuadColor(cell.color, bridgeColor);
+
+        //组成cell的每个三角形区域，有1个矩形混色区域和2个三角形三色混合区域
+        //生成其中一个三角形三色混合区域
+        AddTriangle(v1, center + HexMetrics.GetFirstCorner(direction), v3);
+
+        //为第一个三角形三色混合区域赋值颜色
+        //自身颜色、三个相邻cell的平均色、矩形混合区域中间色
+        AddTriangleColor(
+            cell.color,
+            (cell.color + prevNeighbor.color + neighbor.color) / 3f,
+            bridgeColor
+            );
+
+        //第二个三角形三色混合区域
+        AddTriangle(v2, v4, center + HexMetrics.GetSecondCorner(direction));
+
+        //第二个三角形三色混合区域的颜色
+        AddTriangleColor(
+            cell.color,
+            bridgeColor,
+            (cell.color + nextNeighbor.color + neighbor.color) / 3f
+            );
     }
 
     /// <summary>

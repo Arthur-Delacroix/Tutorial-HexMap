@@ -81,6 +81,13 @@ public static class HexMetrics
         //其实也就是内切圆和cell相切的一个切点，也就是线段V3V4的中点，其实也是角∠(V1 center v2)的角平分线
         //具体可以看图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/1-1-3.png 来理解
         //得出V3 V4中点位置后，再乘以颜色混合区域所占比例，即25%，得出V1到V3的距离
-        return (corners[(int)direction] + corners[(int)direction + 1]) * 0.5f * blendFactor;
+        //return (corners[(int)direction] + corners[(int)direction + 1]) * 0.5f * blendFactor;
+
+        //这里对颜色混合区域进行优化
+        //之前的 * 0.5f 的作用是：设两个cell的颜色混合区域宽度为1
+        //那每个cell的颜色混合区域宽度都是 自身颜色到两者颜色相加的一半
+        //也就是两个相邻的cell各自混合了一半，所以该区域宽度要 *.05f
+        //在这里要将两个0.5宽度的颜色混合区域合并为一个整体，所以不在需要*.05f了
+        return (corners[(int)direction] + corners[(int)direction + 1]) * blendFactor;
     }
 }

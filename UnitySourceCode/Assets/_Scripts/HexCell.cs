@@ -12,6 +12,9 @@ public class HexCell : MonoBehaviour
     //用来存储每个cell的neighbors
     [SerializeField] private HexCell[] neighbors;
 
+    //表示每个cell的高度等级，0即在水平面位置上
+    public int elevation;
+
     /// <summary>
     /// 用来获取neighbors中相应方位cell的实例
     /// 这里注意，虽然HexDirection取值为0-5，neighbors长度为6，不会越界

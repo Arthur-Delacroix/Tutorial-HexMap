@@ -14,6 +14,9 @@ public static class HexMetrics
     //cell的颜色混合区域，为25%外接圆半径
     public const float blendFactor = 1f - solidFactor;
 
+    //地图中每个高度等级之间相差的实际距离
+    public const float elevationStep = 5f;
+
     //正六边形的六个顶点位置，其姿态为角朝上，从最上面一个顶点开始计算位置
     //根据正六边形中点的位置，顺时针依次定义6个顶点的位置
     private static Vector3[] corners =

@@ -12,6 +12,9 @@ public class HexMapEditor : MonoBehaviour
     //已选中的颜色
     private Color activeColor;
 
+    //已选中的高度
+    private int activeElevation;
+
     //这里使用指定的camera代替 Camera.main方式，避免遍历场景中的Object
     [SerializeField] private Camera mainCamera;
 
@@ -45,8 +48,21 @@ public class HexMapEditor : MonoBehaviour
         RaycastHit _hit;
         if (Physics.Raycast(_inputRay, out _hit))
         {
-            hexGrid.ColorCell(_hit.point, activeColor);
+            //hexGrid.ColorCell(_hit.point, activeColor);
+
+            EditCell(hexGrid.GetCell(_hit.point));
         }
+    }
+
+    /// <summary>
+    /// 为被点击cell赋值颜色和高度，并刷新整个地图
+    /// </summary>
+    /// <param name="cell">被点击cell的实例</param>
+    private void EditCell(HexCell cell)
+    {
+        cell.color = activeColor;
+        cell.elevation = activeElevation;
+        hexGrid.Refresh();
     }
 
     /// <summary>
@@ -56,5 +72,14 @@ public class HexMapEditor : MonoBehaviour
     public void SelectColor(int _index)
     {
         activeColor = colors[_index];
+    }
+
+    /// <summary>
+    /// 获取UI选定的高度
+    /// </summary>
+    /// <param name="elevation">从UI的Slider接收的值</param>
+    public void SetElevation(float elevation)
+    {
+        activeElevation = (int)elevation;
     }
 }

@@ -130,20 +130,43 @@ public class HexGrid : MonoBehaviour
     /// </summary>
     /// <param name="_position">鼠标点击hexmap的位置</param>
     /// <param name="_color">选中的颜色</param>
-    public void ColorCell(Vector3 _position, Color _color)
+    //public void ColorCell(Vector3 _position, Color _color)
+    //{
+    //    //将鼠标点击的位置，转换到Hexmap的位置上，为unity坐标
+    //    _position = transform.InverseTransformPoint(_position);
+    //    //将Unity坐标转换为Hexmap坐标
+    //    HexCoordinates _coordinates = HexCoordinates.FromPosition(_position);
+    //    //通过计算的Hexmap坐计算出cell的索引
+    //    int _index = _coordinates.X + _coordinates.Z * width + _coordinates.Z / 2;
+    //    //通过索引在cells数组中找到这个cell的实例
+    //    HexCell _cell = cells[_index];
+    //    //为这个cell的实例赋值颜色
+    //    _cell.color = _color;
+    //    //重新构建所有的cell
+    //    //这里注意，每次进行颜色的改变，都会重新构建整个cells数组，这个遗留问题之后会修正
+    //    hexMesh.Triangulate(cells);
+    //}
+
+
+    /// <summary>
+    /// 获取背点击cell的实例
+    /// </summary>
+    /// <param name="_position">鼠标点击hexmap的位置</param>
+    public HexCell GetCell(Vector3 position)
     {
-        //将鼠标点击的位置，转换到Hexmap的位置上，为unity坐标
-        _position = transform.InverseTransformPoint(_position);
-        //将Unity坐标转换为Hexmap坐标
-        HexCoordinates _coordinates = HexCoordinates.FromPosition(_position);
-        //通过计算的Hexmap坐计算出cell的索引
-        int _index = _coordinates.X + _coordinates.Z * width + _coordinates.Z / 2;
-        //通过索引在cells数组中找到这个cell的实例
-        HexCell _cell = cells[_index];
-        //为这个cell的实例赋值颜色
-        _cell.color = _color;
-        //重新构建所有的cell
-        //这里注意，每次进行颜色的改变，都会重新构建整个cells数组，这个遗留问题之后会修正
+        position = transform.InverseTransformPoint(position);
+        HexCoordinates coordinates = HexCoordinates.FromPosition(position);
+        int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
+
+        //返回被点击cell的实例
+        return cells[index];
+    }
+
+    /// <summary>
+    /// 重新构建整个地图
+    /// </summary>
+    public void Refresh()
+    {
         hexMesh.Triangulate(cells);
     }
 

@@ -13,7 +13,24 @@ public class HexCell : MonoBehaviour
     [SerializeField] private HexCell[] neighbors;
 
     //表示每个cell的高度等级，0即在水平面位置上
-    public int elevation;
+    private int elevation;
+
+    public int Elevation
+    {
+        get
+        {
+            return elevation;
+        }
+        set
+        {
+            elevation = value;
+
+            //在获取高度等级的时候，同时为cell的Mesh赋值相应的高度值
+            Vector3 position = transform.localPosition;
+            position.y = value * HexMetrics.elevationStep;
+            transform.localPosition = position;
+        }
+    }
 
     /// <summary>
     /// 用来获取neighbors中相应方位cell的实例

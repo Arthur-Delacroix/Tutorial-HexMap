@@ -15,6 +15,9 @@ public class HexCell : MonoBehaviour
     //表示每个cell的高度等级，0即在水平面位置上
     private int elevation;
 
+    //自身坐标UI的RectTransform组件实例
+    public RectTransform uiRect;
+
     public int Elevation
     {
         get
@@ -29,6 +32,11 @@ public class HexCell : MonoBehaviour
             Vector3 position = transform.localPosition;
             position.y = value * HexMetrics.elevationStep;
             transform.localPosition = position;
+
+            //设置cell对应UI的高度
+            Vector3 uiPosition = uiRect.localPosition;
+            uiPosition.z = elevation * (-HexMetrics.elevationStep);
+            uiRect.localPosition = uiPosition;
         }
     }
 

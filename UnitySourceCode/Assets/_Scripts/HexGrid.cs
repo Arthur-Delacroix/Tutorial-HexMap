@@ -275,5 +275,8 @@ public class HexGrid : MonoBehaviour
 
         //将转换后的坐标值复制给UGUI的Text组件，将它显示出来
         label.text = cell.coordinates.ToStringOnSeparateLines();
+
+        //获取cell对应UI的rectTransform组件实例
+        cell.uiRect = label.rectTransform;
     }
 }

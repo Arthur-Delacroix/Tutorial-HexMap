@@ -353,6 +353,8 @@ public class HexMesh : MonoBehaviour
         Vector3 bridge = HexMetrics.GetBridge(direction);
         Vector3 v3 = v1 + bridge;
         Vector3 v4 = v2 + bridge;
+        //这里为连接相邻cell的v3 v4顶点加上其所在cell的高度
+        v3.y = v4.y = neighbor.Elevation * HexMetrics.elevationStep;
 
         //进行矩形颜色混合区域的三角面片构建和赋值顶点颜色
         AddQuad(v1, v2, v3, v4);
@@ -366,10 +368,16 @@ public class HexMesh : MonoBehaviour
         //为了避免三角形混合区域的重叠，这里只需要生成NE和E方位的即可
         if (direction <= HexDirection.E && nextNeighbor != null)
         {
+            //声明一个新的vector3变量来存储高度改变后的顶点位置
+            //v5的本质其实就是v2 + HexMetrics.GetBridge(direction.Next()加上高度值
+            Vector3 v5 = v2 + HexMetrics.GetBridge(direction.Next());
+            v5.y = nextNeighbor.Elevation * HexMetrics.elevationStep;
+
             //v2 + HexMetrics.GetBridge(direction.Next()) 为三角形的最后一个顶点位置
             //首先通过HexMetrics.GetBridge(direction.Next()获取 相邻的第二个cell的矩形连接区域宽度，可以理解为一个向量
             //v2顶点位置再加上这个向量，得出了三角形最后一个顶点的位置
-            AddTriangle(v2, v4, v2 + HexMetrics.GetBridge(direction.Next()));
+            //AddTriangle(v2, v4, v2 + HexMetrics.GetBridge(direction.Next()));
+            AddTriangle(v2, v4, v5);
 
             AddTriangleColor(cell.color, neighbor.color, nextNeighbor.color);
         }

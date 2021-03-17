@@ -152,4 +152,29 @@ public static class HexMetrics
         //通过Color.Lerp方法，计算出现在顶点的颜色值
         return Color.Lerp(a, b, h);
     }
+
+    /// <summary>
+    /// 判断两个相邻的cell之间的高度差
+    /// </summary>
+    /// <param name="elevation1">cell自身</param>
+    /// <param name="elevation2">相邻的cell</param>
+    /// <returns>两个相邻cell的连接类型</returns>
+	public static HexEdgeType GetEdgeType(int elevation1, int elevation2)
+    {
+        //两个相邻cell高度相同，为Flat
+        if (elevation1 == elevation2)
+        {
+            return HexEdgeType.Flat;
+        }
+
+        //两个相邻cell高度差1，为Slope
+        int delta = elevation2 - elevation1;
+        if (delta == 1 || delta == -1)
+        {
+            return HexEdgeType.Slope;
+        }
+
+        //剩下的情况，均为Cliff
+        return HexEdgeType.Cliff;
+    }
 }

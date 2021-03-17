@@ -67,6 +67,18 @@ public class HexCell : MonoBehaviour
         cell.neighbors[(int)direction.Opposite()] = this;
     }
 
+    /// <summary>
+    /// 获取指定方位相邻cell 的连接类型(HexEdgeType)
+    /// </summary>
+    /// <param name="direction">指定的相邻方位</param>
+    /// <returns></returns>
+    public HexEdgeType GetEdgeType(HexDirection direction)
+    {
+        return HexMetrics.GetEdgeType(
+            elevation, neighbors[(int)direction].elevation
+        );
+    }
+
     //public Vector3 v1;
     //public Vector3 v2 { get; private set; }
     //void Start()

@@ -36,9 +36,6 @@ public class HexMesh : MonoBehaviour
 
         //初始化colors链表，用于存储顶点颜色信息
         colors = new List<Color>();
-
-        Color aaa = Color.white;
-        Debug.Log(aaa.r);
     }
 
     /// <summary>

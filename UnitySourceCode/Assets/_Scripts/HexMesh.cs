@@ -360,7 +360,18 @@ public class HexMesh : MonoBehaviour
         //AddQuad(v1, v2, v3, v4);
         //AddQuadColor(cell.color, neighbor.color);
         //以上方法注释掉，使用新的 TriangulateEdgeTerraces  进行替换
-        TriangulateEdgeTerraces(v1, v2, cell, v3, v4, neighbor);
+        //TriangulateEdgeTerraces(v1, v2, cell, v3, v4, neighbor);
+        //在这里新加入判断，当两个相邻cell的连接类型为Slope的时候，才会创建阶梯化连接
+        if (cell.GetEdgeType(direction) == HexEdgeType.Slope)
+        {
+            TriangulateEdgeTerraces(v1, v2, cell, v3, v4, neighbor);
+        }
+        else
+        {
+            //当连接类型不为Slope的时候，连接区域是矩形的
+            AddQuad(v1, v2, v3, v4);
+            AddQuadColor(cell.color, neighbor.color);
+        }
 
         //获取相邻方位的下一个方位 的cell
         HexCell nextNeighbor = cell.GetNeighbor(direction.Next());

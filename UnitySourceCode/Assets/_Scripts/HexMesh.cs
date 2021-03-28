@@ -386,6 +386,35 @@ public class HexMesh : MonoBehaviour
             Vector3 v5 = v2 + HexMetrics.GetBridge(direction.Next());
             v5.y = nextNeighbor.Elevation * HexMetrics.elevationStep;
 
+            //参考图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/3-10-1.png
+            //这里要注意，只是要找出3个cell中高度最低的一个
+            //因为三角形连接区域的3个cell，其坐标是固定的，找出最低的一个时，其他两个cell的入参顺序就是固定的了
+            if (cell.Elevation <= neighbor.Elevation)
+            {
+                //并且cell1高度小于cell3
+                if (cell.Elevation <= nextNeighbor.Elevation)
+                {
+                    //cell1最低
+                    TriangulateCorner(v2, cell, v4, nextNeighbor, v5, nextNeighbor);
+                }
+                else
+                {   
+                    //cell3 最低
+                    TriangulateCorner(v5, nextNeighbor, v2, cell, v4, nextNeighbor);
+                }
+            }
+            //如果cell1>cell2，且cell2<cell3
+            else if (neighbor.Elevation <= nextNeighbor.Elevation)
+            {
+                //cell2最低
+                TriangulateCorner(v4, nextNeighbor, v5, nextNeighbor, v2, cell);
+            }
+            else
+            {
+                //cell3最低
+                TriangulateCorner(v5, nextNeighbor, v2, cell, v4, nextNeighbor);
+            }
+
             //v2 + HexMetrics.GetBridge(direction.Next()) 为三角形的最后一个顶点位置
             //首先通过HexMetrics.GetBridge(direction.Next()获取 相邻的第二个cell的矩形连接区域宽度，可以理解为一个向量
             //v2顶点位置再加上这个向量，得出了三角形最后一个顶点的位置
@@ -437,5 +466,21 @@ public class HexMesh : MonoBehaviour
         //连接阶梯的剩余区域
         AddQuad(v3, v4, endLeft, endRight);
         AddQuadColor(c2, endCell.color);
+    }
+
+    /// <summary>
+    /// 构建三角形连接区域的方法
+    /// 这个方法会将相邻的三个cell实例，进行从高到低排列，然后再进行分类，这样接下来就能根据高差进行阶梯化了
+    /// </summary>
+    /// <param name="bottom">bottom cell的坐标</param>
+    /// <param name="bottomCell">bottom cell的实例</param>
+    /// <param name="left">left cell的坐标</param>
+    /// <param name="leftCell">left cell的实例</param>
+    /// <param name="right">right cell的坐标</param>
+    /// <param name="rightCell">right cell的实例</param>
+    private void TriangulateCorner(Vector3 bottom, HexCell bottomCell, Vector3 left, HexCell leftCell, Vector3 right, HexCell rightCell)
+    {
+        AddTriangle(bottom, left, right);
+        AddTriangleColor(bottomCell.color, leftCell.color, rightCell.color);
     }
 }

@@ -307,13 +307,15 @@ public class HexMesh : MonoBehaviour
     /// <param name="c2">第二个顶点的颜色信息</param>
     /// <param name="c3">第三个顶点的颜色信息</param>
     /// <param name="c4">第四个顶点的颜色信息</param>
-    //private void AddQuadColor(Color c1, Color c2, Color c3, Color c4)
-    //{
-    //    colors.Add(c1);
-    //    colors.Add(c2);
-    //    colors.Add(c3);
-    //    colors.Add(c4);
-    //}
+    
+    private void AddQuadColor(Color c1, Color c2, Color c3, Color c4)
+    {
+        colors.Add(c1);
+        colors.Add(c2);
+        colors.Add(c3);
+        colors.Add(c4);
+    }
+    
 
     /// <summary>
     /// 为四边形颜色混合区域的每个顶点赋值颜色
@@ -398,7 +400,7 @@ public class HexMesh : MonoBehaviour
                     TriangulateCorner(v2, cell, v4, nextNeighbor, v5, nextNeighbor);
                 }
                 else
-                {   
+                {
                     //cell3 最低
                     TriangulateCorner(v5, nextNeighbor, v2, cell, v4, nextNeighbor);
                 }
@@ -419,9 +421,9 @@ public class HexMesh : MonoBehaviour
             //首先通过HexMetrics.GetBridge(direction.Next()获取 相邻的第二个cell的矩形连接区域宽度，可以理解为一个向量
             //v2顶点位置再加上这个向量，得出了三角形最后一个顶点的位置
             //AddTriangle(v2, v4, v2 + HexMetrics.GetBridge(direction.Next()));
-            AddTriangle(v2, v4, v5);
 
-            AddTriangleColor(cell.color, neighbor.color, nextNeighbor.color);
+            //AddTriangle(v2, v4, v5);
+            //AddTriangleColor(cell.color, neighbor.color, nextNeighbor.color);
         }
     }
 
@@ -470,7 +472,9 @@ public class HexMesh : MonoBehaviour
 
     /// <summary>
     /// 构建三角形连接区域的方法
-    /// 这个方法会将相邻的三个cell实例，进行从高到低排列，然后再进行分类，这样接下来就能根据高差进行阶梯化了
+    /// 判断相邻3个cell高低的工作，在TriangulateConnection方法中实现了，这里只负责创建连接区域
+    /// 注意，TriangulateConnection方法只是对入参的顺序做了调整，但是并没有告知3个cell之间相对的连接类型
+    /// 所以要在这个方法中对连接类型进行判断，这样才能决定用什么方式进行三角剖分
     /// </summary>
     /// <param name="bottom">bottom cell的坐标</param>
     /// <param name="bottomCell">bottom cell的实例</param>
@@ -480,7 +484,56 @@ public class HexMesh : MonoBehaviour
     /// <param name="rightCell">right cell的实例</param>
     private void TriangulateCorner(Vector3 bottom, HexCell bottomCell, Vector3 left, HexCell leftCell, Vector3 right, HexCell rightCell)
     {
-        AddTriangle(bottom, left, right);
-        AddTriangleColor(bottomCell.color, leftCell.color, rightCell.color);
+        //这里先获取Left和Right两个cell，相较于Bottom cell的高度类型，这样才能决定怎样做三角剖分
+        HexEdgeType leftEdgeType = bottomCell.GetEdgeType(leftCell);
+        HexEdgeType rightEdgeType = bottomCell.GetEdgeType(rightCell);
+
+        //这里通过获取的Left和Right 相较于Bottom的连接类型进行判断，具体三个cell的高度关系
+        //判断完成后，直接调用对应的方法构建三角形连接区域，而不使用之前通用的方法构建
+        if (leftEdgeType == HexEdgeType.Slope)
+        {
+            if (rightEdgeType == HexEdgeType.Slope)
+            {
+                //这里判断为SSF类型
+                //TriangulateCornerTerraces(bottom, bottomCell, left, leftCell, right, rightCell);
+
+
+                Debug.Log("aaaaa");
+                return;
+            }
+        }
+
+        //AddTriangle(bottom, left, right);
+        //AddTriangleColor(bottomCell.color, leftCell.color, rightCell.color);
+    }
+
+    private void TriangulateCornerTerraces(Vector3 begin, HexCell beginCell, Vector3 left, HexCell leftCell, Vector3 right, HexCell rightCell)
+    {
+        
+        Vector3 v3 = HexMetrics.TerraceLerp(begin, left, 1);
+        Vector3 v4 = HexMetrics.TerraceLerp(begin, right, 1);
+        Color c3 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, 1);
+        Color c4 = HexMetrics.TerraceLerp(beginCell.color, rightCell.color, 1);
+
+        AddTriangle(begin, v3, v4);
+        AddTriangleColor(beginCell.color, c3, c4);
+
+        for (int i = 2; i < HexMetrics.terraceSteps; i++)
+        {
+            Vector3 v1 = v3;
+            Vector3 v2 = v4;
+            Color c1 = c3;
+            Color c2 = c4;
+            v3 = HexMetrics.TerraceLerp(begin, left, i);
+            v4 = HexMetrics.TerraceLerp(begin, right, i);
+            c3 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, i);
+            c4 = HexMetrics.TerraceLerp(beginCell.color, rightCell.color, i);
+            AddQuad(v1, v2, v3, v4);
+            AddQuadColor(c1, c2, c3, c4);
+        }
+
+        AddQuad(v3, v4, left, right);
+        AddQuadColor(c3, c4, leftCell.color, rightCell.color);
+        
     }
 }

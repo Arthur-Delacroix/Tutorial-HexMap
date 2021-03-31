@@ -74,9 +74,17 @@ public class HexCell : MonoBehaviour
     /// <returns></returns>
     public HexEdgeType GetEdgeType(HexDirection direction)
     {
-        return HexMetrics.GetEdgeType(
-            elevation, neighbors[(int)direction].elevation
-        );
+        return HexMetrics.GetEdgeType(elevation, neighbors[(int)direction].elevation);
+    }
+
+    /// <summary>
+    /// 对比自身和另一个cell的高度，返回两个cell的连接类型
+    /// </summary>
+    /// <param name="otherCell">另一个cell的实例</param>
+    /// <returns>两个cell的连接类型</returns>
+    public HexEdgeType GetEdgeType(HexCell otherCell)
+    {
+        return HexMetrics.GetEdgeType(elevation, otherCell.elevation);
     }
 
     //public Vector3 v1;

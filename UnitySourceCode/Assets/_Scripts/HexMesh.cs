@@ -391,30 +391,36 @@ public class HexMesh : MonoBehaviour
             //参考图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/3-10-1.png
             //这里要注意，只是要找出3个cell中高度最低的一个
             //因为三角形连接区域的3个cell，其坐标是固定的，找出最低的一个时，其他两个cell的入参顺序就是固定的了
+
+            //注意，教程4.1是有错误的但是最后给的代码是对的，这里注释掉的语句是教程错误的语句
             if (cell.Elevation <= neighbor.Elevation)
             {
                 //并且cell1高度小于cell3
                 if (cell.Elevation <= nextNeighbor.Elevation)
                 {
                     //cell1最低
-                    TriangulateCorner(v2, cell, v4, nextNeighbor, v5, nextNeighbor);
+                    //TriangulateCorner(v2, cell, v4, nextNeighbor, v5, nextNeighbor);
+                    TriangulateCorner(v2, cell, v4, neighbor, v5, nextNeighbor);
                 }
                 else
                 {
                     //cell3 最低
-                    TriangulateCorner(v5, nextNeighbor, v2, cell, v4, nextNeighbor);
+                    //TriangulateCorner(v5, nextNeighbor, v2, cell, v4, nextNeighbor);
+                    TriangulateCorner(v5, nextNeighbor, v2, cell, v4, neighbor);
                 }
             }
             //如果cell1>cell2，且cell2<cell3
             else if (neighbor.Elevation <= nextNeighbor.Elevation)
             {
                 //cell2最低
-                TriangulateCorner(v4, nextNeighbor, v5, nextNeighbor, v2, cell);
+                //TriangulateCorner(v4, nextNeighbor, v5, nextNeighbor, v2, cell);
+                TriangulateCorner(v4, neighbor, v5, nextNeighbor, v2, cell);
             }
             else
             {
                 //cell3最低
-                TriangulateCorner(v5, nextNeighbor, v2, cell, v4, nextNeighbor);
+                //TriangulateCorner(v5, nextNeighbor, v2, cell, v4, nextNeighbor);
+                TriangulateCorner(v5, nextNeighbor, v2, cell, v4, neighbor);
             }
 
             //v2 + HexMetrics.GetBridge(direction.Next()) 为三角形的最后一个顶点位置
@@ -474,7 +480,7 @@ public class HexMesh : MonoBehaviour
     /// 构建三角形连接区域的方法
     /// 判断相邻3个cell高低的工作，在TriangulateConnection方法中实现了，这里只负责创建连接区域
     /// 注意，TriangulateConnection方法只是对入参的顺序做了调整，但是并没有告知3个cell之间相对的连接类型
-    /// 所以要在这个方法中对连接类型进行判断，这样才能决定用什么方式进行三角剖分
+    /// 所以要在这个方法中对连接类型进行判断，这样才能决三角形连接区域定用什么方式进行三角剖分
     /// </summary>
     /// <param name="bottom">bottom cell的坐标</param>
     /// <param name="bottomCell">bottom cell的实例</param>
@@ -495,29 +501,40 @@ public class HexMesh : MonoBehaviour
             if (rightEdgeType == HexEdgeType.Slope)
             {
                 //这里判断为SSF类型
-                //TriangulateCornerTerraces(bottom, bottomCell, left, leftCell, right, rightCell);
-
-
-                Debug.Log("aaaaa");
+                TriangulateCornerTerraces(bottom, bottomCell, left, leftCell, right, rightCell);
                 return;
             }
         }
 
-        //AddTriangle(bottom, left, right);
-        //AddTriangleColor(bottomCell.color, leftCell.color, rightCell.color);
+        //这里先使用旧的方法来构建三角形连接区域，也就是没有阶梯化的那种
+        //经过连接类型判断后，这个方法就会被代替掉
+        AddTriangle(bottom, left, right);
+        AddTriangleColor(bottomCell.color, leftCell.color, rightCell.color);
     }
 
+    /// <summary>
+    /// 创建阶梯状的三角形连接区域
+    /// </summary>
+    /// <param name="begin">初始cell位置</param>
+    /// <param name="beginCell">初始cell实例</param>
+    /// <param name="left">左侧cell位置</param>
+    /// <param name="leftCell">左侧cell实例</param>
+    /// <param name="right">右侧cell位置</param>
+    /// <param name="rightCell">右侧cell实例</param>
     private void TriangulateCornerTerraces(Vector3 begin, HexCell beginCell, Vector3 left, HexCell leftCell, Vector3 right, HexCell rightCell)
     {
         
+        //计算出与begin相邻的两个cell，每个阶梯的顶点和其对应的颜色
         Vector3 v3 = HexMetrics.TerraceLerp(begin, left, 1);
         Vector3 v4 = HexMetrics.TerraceLerp(begin, right, 1);
         Color c3 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, 1);
         Color c4 = HexMetrics.TerraceLerp(beginCell.color, rightCell.color, 1);
 
+        //与矩形阶梯区域不同的是，阶梯三角形连接区域最下端是一个三角形，这里先构建这个三角形
         AddTriangle(begin, v3, v4);
         AddTriangleColor(beginCell.color, c3, c4);
 
+        //循环获取中间部分的顶点位置和颜色信息
         for (int i = 2; i < HexMetrics.terraceSteps; i++)
         {
             Vector3 v1 = v3;
@@ -532,8 +549,8 @@ public class HexMesh : MonoBehaviour
             AddQuadColor(c1, c2, c3, c4);
         }
 
+        //构建剩余的部分
         AddQuad(v3, v4, left, right);
         AddQuadColor(c3, c4, leftCell.color, rightCell.color);
-        
     }
 }

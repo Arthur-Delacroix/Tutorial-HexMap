@@ -307,7 +307,7 @@ public class HexMesh : MonoBehaviour
     /// <param name="c2">第二个顶点的颜色信息</param>
     /// <param name="c3">第三个顶点的颜色信息</param>
     /// <param name="c4">第四个顶点的颜色信息</param>
-    
+
     private void AddQuadColor(Color c1, Color c2, Color c3, Color c4)
     {
         colors.Add(c1);
@@ -315,7 +315,7 @@ public class HexMesh : MonoBehaviour
         colors.Add(c3);
         colors.Add(c4);
     }
-    
+
 
     /// <summary>
     /// 为四边形颜色混合区域的每个顶点赋值颜色
@@ -498,10 +498,28 @@ public class HexMesh : MonoBehaviour
         //判断完成后，直接调用对应的方法构建三角形连接区域，而不使用之前通用的方法构建
         if (leftEdgeType == HexEdgeType.Slope)
         {
+            //这是SSF类型正常情况，即2个cell高度为1，一个cell高度为0
             if (rightEdgeType == HexEdgeType.Slope)
             {
                 //这里判断为SSF类型
                 TriangulateCornerTerraces(bottom, bottomCell, left, leftCell, right, rightCell);
+                return;
+            }
+
+            //SSF变体1 即2个cell高度为0，一个cell高度为1，且高度为1的cell在左侧
+            if (rightEdgeType == HexEdgeType.Flat)
+            {
+                TriangulateCornerTerraces(left, leftCell, right, rightCell, bottom, bottomCell);
+                return;
+            }
+        }
+
+        if (rightEdgeType == HexEdgeType.Slope)
+        {
+            //SSF变体2 即2个cell高度为0，一个cell高度为1，且高度为1的cell在右侧
+            if (leftEdgeType == HexEdgeType.Flat)
+            {
+                TriangulateCornerTerraces(right, rightCell, bottom, bottomCell, left, leftCell);
                 return;
             }
         }
@@ -523,7 +541,7 @@ public class HexMesh : MonoBehaviour
     /// <param name="rightCell">右侧cell实例</param>
     private void TriangulateCornerTerraces(Vector3 begin, HexCell beginCell, Vector3 left, HexCell leftCell, Vector3 right, HexCell rightCell)
     {
-        
+
         //计算出与begin相邻的两个cell，每个阶梯的顶点和其对应的颜色
         Vector3 v3 = HexMetrics.TerraceLerp(begin, left, 1);
         Vector3 v4 = HexMetrics.TerraceLerp(begin, right, 1);

@@ -16,7 +16,7 @@ public class HexMapEditor : MonoBehaviour
     private int activeElevation;
 
     //这里使用指定的camera代替 Camera.main方式，避免遍历场景中的Object
-    [SerializeField] private Camera mainCamera;
+    [SerializeField] private Camera mainCamera = null;
 
     private void Awake()
     {

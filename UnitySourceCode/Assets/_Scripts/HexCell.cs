@@ -10,7 +10,7 @@ public class HexCell : MonoBehaviour
     public Color color;
 
     //用来存储每个cell的neighbors
-    [SerializeField] private HexCell[] neighbors;
+    [SerializeField] private HexCell[] neighbors = null;
 
     //表示每个cell的高度等级，0即在水平面位置上
     private int elevation;

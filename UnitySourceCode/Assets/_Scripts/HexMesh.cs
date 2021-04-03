@@ -512,6 +512,11 @@ public class HexMesh : MonoBehaviour
                 TriangulateCornerTerraces(left, leftCell, right, rightCell, bottom, bottomCell);
                 return;
             }
+
+            //Slope-Cliff连接类型
+            //bottom最低，left比bottom高1，right比bottom高2及以上
+            TriangulateCornerTerracesCliff(bottom, bottomCell, left, leftCell, right, rightCell);
+            return;
         }
 
         if (rightEdgeType == HexEdgeType.Slope)
@@ -531,7 +536,10 @@ public class HexMesh : MonoBehaviour
     }
 
     /// <summary>
-    /// 创建阶梯状的三角形连接区域
+    /// 针对SSF组合类型 创建阶梯状的三角形连接区域
+    /// SFF及其变体的组合，参考图
+    /// http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/3-11-1.png
+    /// http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/3-12-1.png
     /// </summary>
     /// <param name="begin">初始cell位置</param>
     /// <param name="beginCell">初始cell实例</param>
@@ -570,5 +578,20 @@ public class HexMesh : MonoBehaviour
         //构建剩余的部分
         AddQuad(v3, v4, left, right);
         AddQuadColor(c3, c4, leftCell.color, rightCell.color);
+    }
+
+    /// <summary>
+    /// 针对Slope-Cliff连接类型 创建三角形连接区域
+    /// 参考图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/3-13-3.png
+    /// </summary>
+    /// <param name="begin">初始cell位置</param>
+    /// <param name="beginCell">初始cell实例</param>
+    /// <param name="left">左侧cell位置</param>
+    /// <param name="leftCell">左侧cell实例</param>
+    /// <param name="right">右侧cell位置</param>
+    /// <param name="rightCell">右侧cell实例</param>
+    private void TriangulateCornerTerracesCliff(Vector3 begin, HexCell beginCell, Vector3 left, HexCell leftCell, Vector3 right, HexCell rightCell)
+    {
+
     }
 }

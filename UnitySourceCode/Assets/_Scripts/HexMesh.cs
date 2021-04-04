@@ -592,6 +592,38 @@ public class HexMesh : MonoBehaviour
     /// <param name="rightCell">右侧cell实例</param>
     private void TriangulateCornerTerracesCliff(Vector3 begin, HexCell beginCell, Vector3 left, HexCell leftCell, Vector3 right, HexCell rightCell)
     {
+        //这里将Slope-Cliff类型的三角形连接区域拆分成两部分进行构建
+        //示意图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/3-14-2.png
+        //即三角形一个边进行阶梯化，阶梯化后的端点，都与另一条边上的一点相连
+        //边上一点，是通过bottom与right高度差，在进行插值得到的
+        float b = 1f / (rightCell.Elevation - beginCell.Elevation);
+        Vector3 boundary = Vector3.Lerp(begin, right, b);
+        Color boundaryColor = Color.Lerp(beginCell.color, rightCell.color, b);
 
+        //测试通过插值找到的三角形上一点是否正确
+        //AddTriangle(begin, left, boundary);
+        //AddTriangleColor(beginCell.color, leftCell.color, boundaryColor);
+
+        //与构建其他阶梯状区域类似，首先构建第一个三角面片
+        Vector3 v2 = HexMetrics.TerraceLerp(begin, left, 1);
+        Color c2 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, 1);
+
+        AddTriangle(begin, v2, boundary);
+        AddTriangleColor(beginCell.color, c2, boundaryColor);
+
+        //循环创建中间部分的三角面片
+        for (int i = 2; i < HexMetrics.terraceSteps; i++)
+        {
+            Vector3 v1 = v2;
+            Color c1 = c2;
+            v2 = HexMetrics.TerraceLerp(begin, left, i);
+            c2 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, i);
+            AddTriangle(v1, v2, boundary);
+            AddTriangleColor(c1, c2, boundaryColor);
+        }
+
+        //构建剩余区域
+        AddTriangle(v2, left, boundary);
+        AddTriangleColor(c2, leftCell.color, boundaryColor);
     }
 }

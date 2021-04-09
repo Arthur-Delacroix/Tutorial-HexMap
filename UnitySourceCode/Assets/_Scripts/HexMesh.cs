@@ -604,6 +604,35 @@ public class HexMesh : MonoBehaviour
         //AddTriangle(begin, left, boundary);
         //AddTriangleColor(beginCell.color, leftCell.color, boundaryColor);
 
+        //构建底部三角面片
+        TriangulateBoundaryTriangle(begin, beginCell, left, leftCell, boundary, boundaryColor);
+
+        //如果left和right的高度关系为Slope，也就是高度差1
+        //那么就使用构建底部构建三角面片的方法，只不过入参是上下翻转的
+        if (leftCell.GetEdgeType(rightCell) == HexEdgeType.Slope)
+        {
+            TriangulateBoundaryTriangle(left, leftCell, right, rightCell, boundary, boundaryColor);
+        }
+        //如果left和right的高度关系为Cliff，也就是高度差大于1
+        //那么直接只用一个三角面片填补这个区域即可
+        else
+        {
+            AddTriangle(left, right, boundary);
+            AddTriangleColor(leftCell.color, rightCell.color, boundaryColor);
+        }
+    }
+
+    /// <summary>
+    /// Slope-Cliff连接类型种 创建底部区域
+    /// </summary>
+    /// <param name="begin">初始cell位置</param>
+    /// <param name="beginCell">初始cell实例</param>
+    /// <param name="left">左侧cell位置</param>
+    /// <param name="leftCell">左侧cell实例</param>
+    /// <param name="right">右侧cell位置</param>
+    /// <param name="rightCell">右侧cell实例</param>
+    private void TriangulateBoundaryTriangle(Vector3 begin, HexCell beginCell, Vector3 left, HexCell leftCell, Vector3 boundary, Color boundaryColor)
+    {
         //与构建其他阶梯状区域类似，首先构建第一个三角面片
         Vector3 v2 = HexMetrics.TerraceLerp(begin, left, 1);
         Color c2 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, 1);

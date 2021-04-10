@@ -514,7 +514,7 @@ public class HexMesh : MonoBehaviour
             }
 
             //Slope-Cliff连接类型
-            //bottom最低，left比bottom高1，right比bottom高2及以上
+            //bottom最低，left比bottom高1，right比bottom高1及以上
             TriangulateCornerTerracesCliff(bottom, bottomCell, left, leftCell, right, rightCell);
             return;
         }
@@ -527,6 +527,11 @@ public class HexMesh : MonoBehaviour
                 TriangulateCornerTerraces(right, rightCell, bottom, bottomCell, left, leftCell);
                 return;
             }
+
+            //Slope-Cliff连接 镜像 类型
+            //bottom最低，right比bottom高1，left比right高1及以上
+            TriangulateCornerCliffTerraces(bottom, bottomCell, left, leftCell, right, rightCell);
+            return;
         }
 
         //这里先使用旧的方法来构建三角形连接区域，也就是没有阶梯化的那种
@@ -654,5 +659,40 @@ public class HexMesh : MonoBehaviour
         //构建剩余区域
         AddTriangle(v2, left, boundary);
         AddTriangleColor(c2, leftCell.color, boundaryColor);
+    }
+
+    /// <summary>
+    /// 针对Slope-Cliff连接 镜像 类型 创建三角形连接区域
+    /// 参考图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/3-16-1.png
+    /// 这里镜像类型的构建与Slope-Cliff相似，只是调整了构建三角形的时候，顶点的顺序
+    /// 方法中注释掉的代码是 TriangulateCornerTerracesCliff 不同的部分
+    /// </summary>
+    /// <param name="begin">初始cell位置</param>
+    /// <param name="beginCell">初始cell实例</param>
+    /// <param name="left">左侧cell位置</param>
+    /// <param name="leftCell">左侧cell实例</param>
+    /// <param name="right">右侧cell位置</param>
+    /// <param name="rightCell">右侧cell实例</param>
+    private void TriangulateCornerCliffTerraces(Vector3 begin, HexCell beginCell, Vector3 left, HexCell leftCell, Vector3 right, HexCell rightCell)
+    {
+        //float b = 1f / (rightCell.Elevation - beginCell.Elevation);
+        //Vector3 boundary = Vector3.Lerp(begin, right, b);
+        //Color boundaryColor = Color.Lerp(beginCell.color, rightCell.color, b);
+        float b = 1f / (leftCell.Elevation - beginCell.Elevation);
+        Vector3 boundary = Vector3.Lerp(begin, left, b);
+        Color boundaryColor = Color.Lerp(beginCell.color, leftCell.color, b);
+
+        //TriangulateBoundaryTriangle(begin, beginCell, left, leftCell, boundary, boundaryColor);
+        TriangulateBoundaryTriangle(right, rightCell, begin, beginCell, boundary, boundaryColor);
+
+        if (leftCell.GetEdgeType(rightCell) == HexEdgeType.Slope)
+        {
+            TriangulateBoundaryTriangle(left, leftCell, right, rightCell, boundary, boundaryColor);
+        }
+        else
+        {
+            AddTriangle(left, right, boundary);
+            AddTriangleColor(leftCell.color, rightCell.color, boundaryColor);
+        }
     }
 }

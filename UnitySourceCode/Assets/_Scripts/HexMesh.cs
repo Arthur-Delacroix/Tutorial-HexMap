@@ -534,6 +534,23 @@ public class HexMesh : MonoBehaviour
             return;
         }
 
+        //bottom最低，与left和right高差都大于1，并且left和right高差为1，称为 CCS类型
+        //如果left比right高1，那么就是CCSL，反之right比left高1，那就是CCSR
+        if (leftCell.GetEdgeType(rightCell) == HexEdgeType.Slope)
+        {
+            //CCSR
+            if (leftCell.Elevation < rightCell.Elevation)
+            {
+                TriangulateCornerCliffTerraces(right, rightCell, bottom, bottomCell, left, leftCell);
+            }
+            //CCSL
+            else
+            {
+                TriangulateCornerTerracesCliff(left, leftCell, right, rightCell, bottom, bottomCell);
+            }
+            return;
+        }
+
         //这里先使用旧的方法来构建三角形连接区域，也就是没有阶梯化的那种
         //经过连接类型判断后，这个方法就会被代替掉
         AddTriangle(bottom, left, right);
@@ -601,7 +618,16 @@ public class HexMesh : MonoBehaviour
         //示意图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/3-14-2.png
         //即三角形一个边进行阶梯化，阶梯化后的端点，都与另一条边上的一点相连
         //边上一点，是通过bottom与right高度差，在进行插值得到的
+        //float b = 1f / (rightCell.Elevation - beginCell.Elevation);
+
+        //这里注意，在进行CCSL和CCSR类型三角形连接区域构建时，上下翻转，插值就为负数
+        //这里将计算结构变为正数后再进行插值计算
         float b = 1f / (rightCell.Elevation - beginCell.Elevation);
+        if (b < 0)
+        {
+            b = -b;
+        }
+
         Vector3 boundary = Vector3.Lerp(begin, right, b);
         Color boundaryColor = Color.Lerp(beginCell.color, rightCell.color, b);
 
@@ -678,7 +704,13 @@ public class HexMesh : MonoBehaviour
         //float b = 1f / (rightCell.Elevation - beginCell.Elevation);
         //Vector3 boundary = Vector3.Lerp(begin, right, b);
         //Color boundaryColor = Color.Lerp(beginCell.color, rightCell.color, b);
+
         float b = 1f / (leftCell.Elevation - beginCell.Elevation);
+        if (b < 0)
+        {
+            b = -b;
+        }
+
         Vector3 boundary = Vector3.Lerp(begin, left, b);
         Color boundaryColor = Color.Lerp(beginCell.color, leftCell.color, b);
 

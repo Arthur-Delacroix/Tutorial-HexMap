@@ -503,40 +503,39 @@ public class HexMesh : MonoBehaviour
             {
                 //这里判断为SSF类型
                 TriangulateCornerTerraces(bottom, bottomCell, left, leftCell, right, rightCell);
-                return;
             }
 
             //SSF变体1 即2个cell高度为0，一个cell高度为1，且高度为1的cell在左侧
-            if (rightEdgeType == HexEdgeType.Flat)
+            else if (rightEdgeType == HexEdgeType.Flat)
             {
                 TriangulateCornerTerraces(left, leftCell, right, rightCell, bottom, bottomCell);
-                return;
             }
-
-            //Slope-Cliff连接类型
-            //bottom最低，left比bottom高1，right比bottom高1及以上
-            TriangulateCornerTerracesCliff(bottom, bottomCell, left, leftCell, right, rightCell);
-            return;
+            else
+            {
+                //Slope-Cliff连接类型
+                //bottom最低，left比bottom高1，right比bottom高1及以上
+                TriangulateCornerTerracesCliff(bottom, bottomCell, left, leftCell, right, rightCell);
+            }
         }
 
-        if (rightEdgeType == HexEdgeType.Slope)
+        else if (rightEdgeType == HexEdgeType.Slope)
         {
             //SSF变体2 即2个cell高度为0，一个cell高度为1，且高度为1的cell在右侧
             if (leftEdgeType == HexEdgeType.Flat)
             {
                 TriangulateCornerTerraces(right, rightCell, bottom, bottomCell, left, leftCell);
-                return;
             }
-
-            //Slope-Cliff连接 镜像 类型
-            //bottom最低，right比bottom高1，left比right高1及以上
-            TriangulateCornerCliffTerraces(bottom, bottomCell, left, leftCell, right, rightCell);
-            return;
+            else
+            {
+                //Slope-Cliff连接 镜像 类型
+                //bottom最低，right比bottom高1，left比right高1及以上
+                TriangulateCornerCliffTerraces(bottom, bottomCell, left, leftCell, right, rightCell);
+            }
         }
 
         //bottom最低，与left和right高差都大于1，并且left和right高差为1，称为 CCS类型
         //如果left比right高1，那么就是CCSL，反之right比left高1，那就是CCSR
-        if (leftCell.GetEdgeType(rightCell) == HexEdgeType.Slope)
+        else if (leftCell.GetEdgeType(rightCell) == HexEdgeType.Slope)
         {
             //CCSR
             if (leftCell.Elevation < rightCell.Elevation)
@@ -548,13 +547,14 @@ public class HexMesh : MonoBehaviour
             {
                 TriangulateCornerTerracesCliff(left, leftCell, right, rightCell, bottom, bottomCell);
             }
-            return;
         }
-
-        //这里先使用旧的方法来构建三角形连接区域，也就是没有阶梯化的那种
-        //经过连接类型判断后，这个方法就会被代替掉
-        AddTriangle(bottom, left, right);
-        AddTriangleColor(bottomCell.color, leftCell.color, rightCell.color);
+        else
+        {
+            //这里先使用旧的方法来构建三角形连接区域，也就是没有阶梯化的那种
+            //经过连接类型判断后，这个方法就会被代替掉
+            AddTriangle(bottom, left, right);
+            AddTriangleColor(bottomCell.color, leftCell.color, rightCell.color);
+        }
     }
 
     /// <summary>

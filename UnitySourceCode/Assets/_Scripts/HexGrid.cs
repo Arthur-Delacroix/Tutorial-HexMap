@@ -31,6 +31,9 @@ public class HexGrid : MonoBehaviour
     //cell被点击后的颜色
     public Color touchedColor = Color.magenta;
 
+    //彩色噪点图的实例，直接将图片拖拽至Inspector面板对应位置赋初始值
+    public Texture2D noiseSource;
+
     private void Awake()
     {
         //获取Hex Mesh物体上的hexMesh脚本组件实例
@@ -50,6 +53,17 @@ public class HexGrid : MonoBehaviour
                 CreateCell(x, z, i++);
             }
         }
+
+        //为HexMetrics的静态变量赋值
+        //由于此脚本最先被调用，所以在这里赋初始值
+        HexMetrics.noiseSource = noiseSource;
+    }
+
+    private void OnEnable()
+    {
+        //Unity在Play模式中，Awake只会在脚本被实例化时调用一次，如果之后噪点图改变了，没办法重新为静态变量赋值
+        //所以这里再次进行赋值，之后只要disable后在enable，静态变量就会被重新赋值
+        HexMetrics.noiseSource = noiseSource;
     }
 
     private void Start()

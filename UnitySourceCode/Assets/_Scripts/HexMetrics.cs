@@ -31,6 +31,9 @@ public static class HexMetrics
     //纵向每个步长占整体长度的比例
     public const float verticalTerraceStepSize = 1f / (terracesPerSlope + 1);
 
+    //彩色噪点图的实例，通过HexGrid在初始化时为其
+    public static Texture2D noiseSource;
+
     //正六边形的六个顶点位置，其姿态为角朝上，从最上面一个顶点开始计算位置
     //根据正六边形中点的位置，顺时针依次定义6个顶点的位置
     private static Vector3[] corners =
@@ -176,5 +179,17 @@ public static class HexMetrics
 
         //剩下的情况，均为Cliff
         return HexEdgeType.Cliff;
+    }
+
+    /// <summary>
+    /// 对彩色噪点图进行采样
+    /// </summary>
+    /// <param name="position">采样点位置坐标，世界坐标</param>
+    /// <returns>RGBA四个值组成的4D向量</returns>
+    public static Vector4 SampleNoise(Vector3 position)
+    {
+        //由于入参是世界位置的vector3，而图片UV是二维的，这里忽略掉垂直方向的Y
+        //GetPixelBilinear获取的是指定点的RGBA值，转换为Vector4是隐式的。
+        return noiseSource.GetPixelBilinear(position.x, position.z);
     }
 }

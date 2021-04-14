@@ -1498,6 +1498,7 @@ MonoBehaviour:
     type: 3}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   touchedColor: {r: 1, g: 0, b: 1, a: 1}
+  noiseSource: {fileID: 2800000, guid: ded15a7895f29bb4084a604688b4a700, type: 3}
 --- !u!4 &1119327825
 Transform:
   m_ObjectHideFlags: 0

@@ -261,9 +261,14 @@ public class HexMesh : MonoBehaviour
         int vertexIndex = vertices.Count;
 
         //在vertices链表中添加新增的顶点位置信息
-        vertices.Add(v1);
-        vertices.Add(v2);
-        vertices.Add(v3);
+        //vertices.Add(v1);
+        //vertices.Add(v2);
+        //vertices.Add(v3);
+
+        //这里的坐标变为扰动后的坐标
+        vertices.Add(Perturb(v1));
+        vertices.Add(Perturb(v2));
+        vertices.Add(Perturb(v3));
 
         //在triangles链表中添加新增顶点信息的索引
         triangles.Add(vertexIndex);
@@ -285,10 +290,16 @@ public class HexMesh : MonoBehaviour
         int vertexIndex = vertices.Count;
 
         //在vertices链表中添加新增的顶点位置信息
-        vertices.Add(v1);
-        vertices.Add(v2);
-        vertices.Add(v3);
-        vertices.Add(v4);
+        //vertices.Add(v1);
+        //vertices.Add(v2);
+        //vertices.Add(v3);
+        //vertices.Add(v4);
+
+        //这里的坐标变为扰动后的坐标
+        vertices.Add(Perturb(v1));
+        vertices.Add(Perturb(v2));
+        vertices.Add(Perturb(v3));
+        vertices.Add(Perturb(v4));
 
         //在triangles链表中添加新增顶点信息的索引
         //两个三角面片组成了颜色混合区域，分别为：V1V3V2 和 V2V3V4
@@ -726,5 +737,28 @@ public class HexMesh : MonoBehaviour
             AddTriangle(left, right, boundary);
             AddTriangleColor(leftCell.color, rightCell.color, boundaryColor);
         }
+    }
+
+    /// <summary>
+    /// 通过世界内的一个点(vector3)，经过彩色噪点图扰动后，返回扰动后的Vect3
+    /// </summary>
+    /// <param name="position">世界坐标内的点</param>
+    /// <returns>经过噪点图扰动后的点坐标</returns>
+    private Vector3 Perturb(Vector3 position)
+    {
+        //利用世界空间内一点，在彩色噪点图上进行采样，得到彩色噪点图内一点的RGBA信息
+        Vector4 sample = HexMetrics.SampleNoise(position);
+
+        //使用原始坐标加上噪点图的采样坐标，得到扰动后坐标
+        //position.x += sample.x;
+        //position.y += sample.y;
+        //position.z += sample.z;
+
+        //将采样后的扰动结果控制在1到-1之间
+        position.x += sample.x * 2f - 1f;
+        position.y += sample.y * 2f - 1f;
+        position.z += sample.z * 2f - 1f;
+
+        return position;
     }
 }

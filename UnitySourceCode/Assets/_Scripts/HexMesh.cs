@@ -755,9 +755,14 @@ public class HexMesh : MonoBehaviour
         //position.z += sample.z;
 
         //将采样后的扰动结果控制在1到-1之间
-        position.x += sample.x * 2f - 1f;
-        position.y += sample.y * 2f - 1f;
-        position.z += sample.z * 2f - 1f;
+        //position.x += sample.x * 2f - 1f;
+        //position.y += sample.y * 2f - 1f;
+        //position.z += sample.z * 2f - 1f;
+
+        //增加了每个点的扰动强度
+        position.x += (sample.x * 2f - 1f) * HexMetrics.cellPerturbStrength;
+        position.y += (sample.y * 2f - 1f) * HexMetrics.cellPerturbStrength;
+        position.z += (sample.z * 2f - 1f) * HexMetrics.cellPerturbStrength;
 
         return position;
     }

@@ -31,8 +31,15 @@ public static class HexMetrics
     //纵向每个步长占整体长度的比例
     public const float verticalTerraceStepSize = 1f / (terracesPerSlope + 1);
 
-    //彩色噪点图的实例，通过HexGrid在初始化时为其
+    //彩色噪点图的实例
+    //因为此脚本并未继承MonoBehaviour，不能拖拽赋值。
+    //所以在HexGrid中声明一个变量，并在Awake方法中初始化时为其赋值
     public static Texture2D noiseSource;
+
+    //扰动强度
+    //这个值是一个坐标点在每个轴向上的偏移强度
+    //最大偏移量就是 √￣(3*5^2) ≈ 8.66
+    public const float cellPerturbStrength = 5f;
 
     //正六边形的六个顶点位置，其姿态为角朝上，从最上面一个顶点开始计算位置
     //根据正六边形中点的位置，顺时针依次定义6个顶点的位置

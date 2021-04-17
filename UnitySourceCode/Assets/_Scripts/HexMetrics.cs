@@ -41,6 +41,12 @@ public static class HexMetrics
     //最大偏移量就是 √￣(3*5^2) ≈ 8.66
     public const float cellPerturbStrength = 5f;
 
+    //采样缩放
+    //这个参数的实际作用，就是将时间空间内坐标缩小一定倍率
+    //实际上是变相扩大了一张噪点图的覆盖范围，使得进行采样时更加连续
+    //采样图覆盖地图的示例如图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/4-5-1.png
+    public const float noiseScale = 0.003f;
+
     //正六边形的六个顶点位置，其姿态为角朝上，从最上面一个顶点开始计算位置
     //根据正六边形中点的位置，顺时针依次定义6个顶点的位置
     private static Vector3[] corners =
@@ -197,6 +203,12 @@ public static class HexMetrics
     {
         //由于入参是世界位置的vector3，而图片UV是二维的，这里忽略掉垂直方向的Y
         //GetPixelBilinear获取的是指定点的RGBA值，转换为Vector4是隐式的。
-        return noiseSource.GetPixelBilinear(position.x, position.z);
+        //return noiseSource.GetPixelBilinear(position.x, position.z);
+
+        //实际世界空间坐标乘以缩放系数，使得采样控制在一个比较小的范围内，这样就会比较连续
+        return noiseSource.GetPixelBilinear(
+            position.x * noiseScale,
+            position.z * noiseScale
+        );
     }
 }

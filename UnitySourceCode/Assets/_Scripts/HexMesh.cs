@@ -761,7 +761,8 @@ public class HexMesh : MonoBehaviour
 
         //增加了每个点的扰动强度
         position.x += (sample.x * 2f - 1f) * HexMetrics.cellPerturbStrength;
-        position.y += (sample.y * 2f - 1f) * HexMetrics.cellPerturbStrength;
+        //为了让cell表面变得平坦，这里不再在垂直方向上进行扰动。
+        //position.y += (sample.y * 2f - 1f) * HexMetrics.cellPerturbStrength;
         position.z += (sample.z * 2f - 1f) * HexMetrics.cellPerturbStrength;
 
         return position;

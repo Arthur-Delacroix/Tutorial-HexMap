@@ -47,6 +47,11 @@ public static class HexMetrics
     //采样图覆盖地图的示例如图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/4-5-1.png
     public const float noiseScale = 0.003f;
 
+    //海拔高度扰动强度系数
+    //为了保持cell顶部六边形的平坦，这里不再对cell的每个顶点单独进行垂直方向的扰动
+    //改为对一个cell整体海拔高度进行扰动，然后再乘以一个强度系数
+    public const float elevationPerturbStrength = 1.5f;
+
     //正六边形的六个顶点位置，其姿态为角朝上，从最上面一个顶点开始计算位置
     //根据正六边形中点的位置，顺时针依次定义6个顶点的位置
     private static Vector3[] corners =

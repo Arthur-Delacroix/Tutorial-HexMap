@@ -36,6 +36,10 @@ public class HexGrid : MonoBehaviour
 
     private void Awake()
     {
+        //为HexMetrics的静态变量赋值
+        //由于此脚本最先被调用，所以在这里赋初始值
+        HexMetrics.noiseSource = noiseSource;
+
         //获取Hex Mesh物体上的hexMesh脚本组件实例
         hexMesh = GetComponentInChildren<HexMesh>();
 
@@ -53,10 +57,6 @@ public class HexGrid : MonoBehaviour
                 CreateCell(x, z, i++);
             }
         }
-
-        //为HexMetrics的静态变量赋值
-        //由于此脚本最先被调用，所以在这里赋初始值
-        HexMetrics.noiseSource = noiseSource;
     }
 
     private void OnEnable()
@@ -292,5 +292,8 @@ public class HexGrid : MonoBehaviour
 
         //获取cell对应UI的rectTransform组件实例
         cell.uiRect = label.rectTransform;
+
+        //在地图初始状态下，每个cell的海拔高度都经过扰动
+        cell.Elevation = 0;
     }
 }

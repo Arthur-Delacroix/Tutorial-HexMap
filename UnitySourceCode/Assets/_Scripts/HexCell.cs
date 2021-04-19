@@ -31,11 +31,19 @@ public class HexCell : MonoBehaviour
             //在获取高度等级的时候，同时为cell的Mesh赋值相应的高度值
             Vector3 position = transform.localPosition;
             position.y = value * HexMetrics.elevationStep;
+
+            //这里对cell整体的海拔高度进行扰动，并乘以强度系数
+            position.y += (HexMetrics.SampleNoise(position).y * 2f - 1f) * HexMetrics.elevationPerturbStrength;
+
             transform.localPosition = position;
 
             //设置cell对应UI的高度
             Vector3 uiPosition = uiRect.localPosition;
-            uiPosition.z = elevation * (-HexMetrics.elevationStep);
+            //uiPosition.z = elevation * (-HexMetrics.elevationStep);
+
+            //同样，UI也是扰动后的高度
+            uiPosition.z = -position.y;
+
             uiRect.localPosition = uiPosition;
         }
     }

@@ -1,5 +1,4 @@
-﻿//两个cell之间的高度差分类
-public enum HexEdgeType
+﻿public enum HexEdgeType
 {
     Flat,//高度差为0
     Slope,//高度差为1

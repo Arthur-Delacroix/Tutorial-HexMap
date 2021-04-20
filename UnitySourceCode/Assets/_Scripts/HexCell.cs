@@ -18,6 +18,15 @@ public class HexCell : MonoBehaviour
     //自身坐标UI的RectTransform组件实例
     public RectTransform uiRect;
 
+    //获取cell在扰动后的实际坐标位置
+    public Vector3 Position
+    {
+        get
+        {
+            return transform.localPosition;
+        }
+    }
+
     public int Elevation
     {
         get

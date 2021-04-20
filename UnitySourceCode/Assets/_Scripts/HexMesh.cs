@@ -90,7 +90,10 @@ public class HexMesh : MonoBehaviour
     private void Triangulate(HexDirection direction, HexCell cell)
     {
         //获取单个cell的中点位置
-        Vector3 center = cell.transform.localPosition;
+        //Vector3 center = cell.transform.localPosition;
+
+        //这里是获cell扰动后的位置
+        Vector3 center = cell.Position;
 
         //这两个Vector3变量，是新的cell自身颜色区域中，两个新的顶点信息，其每个顶点距离cell中心为75%外接圆半径
         Vector3 v1 = center + HexMetrics.GetFirstSolidCorner(direction);
@@ -367,7 +370,10 @@ public class HexMesh : MonoBehaviour
         Vector3 v3 = v1 + bridge;
         Vector3 v4 = v2 + bridge;
         //这里为连接相邻cell的v3 v4顶点加上其所在cell的高度
-        v3.y = v4.y = neighbor.Elevation * HexMetrics.elevationStep;
+        //v3.y = v4.y = neighbor.Elevation * HexMetrics.elevationStep;
+
+        //这里在获取相邻cell的位置时，也是使用了扰动后的坐标位置
+        v3.y = v4.y = neighbor.Position.y;
 
         //进行矩形颜色混合区域的三角面片构建和赋值顶点颜色
         //AddQuad(v1, v2, v3, v4);
@@ -397,7 +403,10 @@ public class HexMesh : MonoBehaviour
             //声明一个新的vector3变量来存储高度改变后的顶点位置
             //v5的本质其实就是v2 + HexMetrics.GetBridge(direction.Next()加上高度值
             Vector3 v5 = v2 + HexMetrics.GetBridge(direction.Next());
-            v5.y = nextNeighbor.Elevation * HexMetrics.elevationStep;
+            //v5.y = nextNeighbor.Elevation * HexMetrics.elevationStep;
+
+            //这里在获取相邻cell的位置时，也是使用了扰动后的坐标位置
+            v5.y = nextNeighbor.Position.y;
 
             //参考图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/3-10-1.png
             //这里要注意，只是要找出3个cell中高度最低的一个

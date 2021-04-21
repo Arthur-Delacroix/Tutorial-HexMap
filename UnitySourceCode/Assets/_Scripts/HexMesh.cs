@@ -110,7 +110,16 @@ public class HexMesh : MonoBehaviour
         //Vector3 v4 = v2 + bridge;
         //该段代码移至 TriangulateConnection 方法中
 
+        //为了增加地图的整体细节，这里在cell六边形每个边的中点上，增加一个顶点
+        //让原来的6个面片变为12个。
+        //Vector3 e1 = Vector3.Lerp(v1, v2, 0.5f);
+
+        //这里将正六边形的每个边均分为3份，面数是原来的3倍
+        Vector3 e1 = Vector3.Lerp(v1, v2, 1f / 3f);
+        Vector3 e2 = Vector3.Lerp(v1, v2, 2f / 3f);
+
         //根据中点位置计算出其余两个顶点的信息
+        /*
         AddTriangle(
             center,
             //center + HexMetrics.GetFirstCorner(direction),
@@ -123,6 +132,11 @@ public class HexMesh : MonoBehaviour
             //使用声明的新变量，替换之前计算得出的结果
             v1, v2
         );
+        */
+
+        //这里添加的顶点也变为了一个边的中点
+        //这3个顶点是原来六边形一个三角面片的一半
+        AddTriangle(center, v1, e1);
 
         //将计算好的颜色混合区域定点位置信息，添加到添加到链表中
         //AddQuad(v1, v2, v3, v4);
@@ -182,6 +196,17 @@ public class HexMesh : MonoBehaviour
         //    );
 
         //这里为cell的三角面片每个顶点赋值颜色，因为cell自身不再参与颜色混合，所以只有自身颜色
+        AddTriangleColor(cell.color);
+
+        //这里构建原来六边形一个三角面片的另一半
+        //AddTriangle(center, e1, v2);
+        //AddTriangleColor(cell.color);
+        
+        //添加新增顶点的的位置信息和颜色信息
+        AddTriangle(center, e1, e2);
+        AddTriangleColor(cell.color);
+        AddTriangle(center, e2, v2);
+
         AddTriangleColor(cell.color);
 
         //为颜色混合区域的4个顶点分别赋值颜色

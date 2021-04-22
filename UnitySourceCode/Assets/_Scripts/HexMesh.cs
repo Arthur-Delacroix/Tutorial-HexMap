@@ -201,7 +201,7 @@ public class HexMesh : MonoBehaviour
         //这里构建原来六边形一个三角面片的另一半
         //AddTriangle(center, e1, v2);
         //AddTriangleColor(cell.color);
-        
+
         //添加新增顶点的的位置信息和颜色信息
         AddTriangle(center, e1, e2);
         AddTriangleColor(cell.color);
@@ -247,9 +247,16 @@ public class HexMesh : MonoBehaviour
         //    );
 
         //只生成NE、E、SE这三个方位的连接
+        //if (direction <= HexDirection.SE)
+        //{
+        //    TriangulateConnection(direction, cell, v1, v2);
+        //}
+
+        //因为对六边形的每个边进行了细分，所以要把新的顶点也传入构建矩形连接区域的方法中
+        //这样矩形区域使用新增的顶点后边缘之间才能吻合
         if (direction <= HexDirection.SE)
         {
-            TriangulateConnection(direction, cell, v1, v2);
+            TriangulateConnection(direction, cell, v1, e1, e2, v2);
         }
     }
 
@@ -377,7 +384,10 @@ public class HexMesh : MonoBehaviour
     /// <param name="cell">cell自身实例，用于取得cell位置和颜色 也是三角面片的第一个顶点</param>
     /// <param name="v1">自身颜色三角面片 的第二个顶点</param>
     /// <param name="v2">自身颜色三角面片 的第三个顶点</param>
-    private void TriangulateConnection(HexDirection direction, HexCell cell, Vector3 v1, Vector3 v2)
+    //private void TriangulateConnection(HexDirection direction, HexCell cell, Vector3 v1, Vector3 v2)
+
+    //六边形增加了新的顶点，这里要修改参数列表，接收新的顶点
+    private void TriangulateConnection(HexDirection direction, HexCell cell, Vector3 v1, Vector3 e1, Vector3 e2, Vector3 v2)
     {
         //HexCell neighbor = cell.GetNeighbor(direction) ?? cell;
 
@@ -400,6 +410,10 @@ public class HexMesh : MonoBehaviour
         //这里在获取相邻cell的位置时，也是使用了扰动后的坐标位置
         v3.y = v4.y = neighbor.Position.y;
 
+        //这里要计算与矩形连接区域相邻的，另一侧cell新增的两个顶点位置信息
+        Vector3 e3 = Vector3.Lerp(v3, v4, 1f / 3f);
+        Vector3 e4 = Vector3.Lerp(v3, v4, 2f / 3f);
+
         //进行矩形颜色混合区域的三角面片构建和赋值顶点颜色
         //AddQuad(v1, v2, v3, v4);
         //AddQuadColor(cell.color, neighbor.color);
@@ -413,7 +427,15 @@ public class HexMesh : MonoBehaviour
         else
         {
             //当连接类型不为Slope的时候，连接区域是矩形的
-            AddQuad(v1, v2, v3, v4);
+            //AddQuad(v1, v2, v3, v4);
+            //AddQuadColor(cell.color, neighbor.color);
+
+            //这里使用新增的顶点进行连接区域的构建
+            AddQuad(v1, e1, v3, e3);
+            AddQuadColor(cell.color, neighbor.color);
+            AddQuad(e1, e2, e3, e4);
+            AddQuadColor(cell.color, neighbor.color);
+            AddQuad(e2, v2, e4, v4);
             AddQuadColor(cell.color, neighbor.color);
         }
 

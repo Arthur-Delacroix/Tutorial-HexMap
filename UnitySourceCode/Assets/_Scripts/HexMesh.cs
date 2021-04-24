@@ -392,6 +392,40 @@ public class HexMesh : MonoBehaviour
         colors.Add(c2);
     }
 
+
+    /// <summary>
+    /// 构建阶梯状连接区域
+    /// 这里不再使用单一的顶点，而是直接使用cell与阶梯区域相连接的边，通过计算得出边上的顶点位置以及每个顶点的颜色
+    /// </summary>
+    /// <param name="begin">第一个cell与相邻阶梯化区域的边上顶点</param>
+    /// <param name="beginCell">第一个cell的实例</param>
+    /// <param name="end">第二个cell与相邻阶梯化区域的边上顶点</param>
+    /// <param name="endCell">第二个cell的实例</param>
+    private void TriangulateEdgeTerraces(EdgeVertices begin, HexCell beginCell, EdgeVertices end, HexCell endCell)
+    {
+        //通过插值计算出相邻cell边的每个坐标点
+        EdgeVertices e2 = EdgeVertices.TerraceLerp(begin, end, 1);
+        //通过插值计算出相邻cell边每个坐标点的颜色
+        Color c2 = HexMetrics.TerraceLerp(beginCell.color, endCell.color, 1);
+
+        //构建阶梯的第一段
+        TriangulateEdgeStrip(begin, beginCell.color, e2, c2);
+
+        //循环生成中间部分
+        for (int i = 2; i < HexMetrics.terraceSteps; i++)
+        {
+            EdgeVertices e1 = e2;
+            Color c1 = c2;
+            e2 = EdgeVertices.TerraceLerp(begin, end, i);
+            c2 = HexMetrics.TerraceLerp(beginCell.color, endCell.color, i);
+            TriangulateEdgeStrip(e1, c1, e2, c2);
+        }
+
+        //构建阶梯的最后一段
+        TriangulateEdgeStrip(e2, c2, end, endCell.color);
+    }
+
+
     /// <summary>
     /// 构建cell其中一个三角面片的颜色混合区域
     /// </summary>
@@ -435,7 +469,7 @@ public class HexMesh : MonoBehaviour
         //先计算出两个相邻cell的高度差
         bridge.y = neighbor.Position.y - cell.Position.y;
 
-        //利用高度差和第一个cell的坐标
+        //利用高度差和第一个cell的坐标，获得连接区域另外一边的4个顶点位置
         EdgeVertices e2 = new EdgeVertices(e1.v1 + bridge, e1.v4 + bridge);
 
         //进行矩形颜色混合区域的三角面片构建和赋值顶点颜色
@@ -449,7 +483,10 @@ public class HexMesh : MonoBehaviour
             //TriangulateEdgeTerraces(v1, v2, cell, v3, v4, neighbor);
 
             //这里也使用EdgeVertices计算的顶点来构建矩形
-            TriangulateEdgeTerraces(e1.v1, e1.v4, cell, e2.v1, e2.v4, neighbor);
+            //TriangulateEdgeTerraces(e1.v1, e1.v4, cell, e2.v1, e2.v4, neighbor);
+
+            //将新的顶点信息传入构建阶梯连接区域的方法中
+            TriangulateEdgeTerraces(e1, cell, e2, neighbor);
         }
         else
         {

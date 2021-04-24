@@ -17,4 +17,21 @@ public struct EdgeVertices
         v3 = Vector3.Lerp(corner1, corner2, 2f / 3f);
         v4 = corner2;
     }
+
+    /// <summary>
+    /// 通过两个cell的边，计算出阶梯连接区域，每一段上顶点的位置
+    /// </summary>
+    /// <param name="a">阶梯连接区域起始边</param>
+    /// <param name="b">姐弟连接区域结束边</param>
+    /// <param name="step">插值</param>
+    /// <returns>插值为step时，当前段落上每个顶点的位置信息</returns>
+    public static EdgeVertices TerraceLerp(EdgeVertices a, EdgeVertices b, int step)
+    {
+        EdgeVertices result;
+        result.v1 = HexMetrics.TerraceLerp(a.v1, b.v1, step);
+        result.v2 = HexMetrics.TerraceLerp(a.v2, b.v2, step);
+        result.v3 = HexMetrics.TerraceLerp(a.v3, b.v3, step);
+        result.v4 = HexMetrics.TerraceLerp(a.v4, b.v4, step);
+        return result;
+    }
 }

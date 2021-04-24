@@ -111,7 +111,7 @@ public static class HexMetrics
     /// 获取矩形混合区域中，内边缘顶点到外边缘顶点的距离
     /// </summary>
     /// <param name="direction">顶点方位</param>
-    /// <returns></returns>
+    /// <returns>中垂线(2-8-1图中虚线)中blendFactor比例处的一个点，也就是混合区域的分界点。</returns>
     public static Vector3 GetBridge(HexDirection direction)
     {
         //参考图片 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/2-8-1.png

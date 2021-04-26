@@ -816,7 +816,9 @@ public class HexMesh : MonoBehaviour
         //那么直接只用一个三角面片填补这个区域即可
         else
         {
-            AddTriangle(left, right, boundary);
+            //AddTriangle(left, right, boundary);
+            //这里不再扰动分界点
+            AddTriangleUnperturbed(Perturb(left), Perturb(right), boundary);
             AddTriangleColor(leftCell.color, rightCell.color, boundaryColor);
         }
     }
@@ -914,7 +916,9 @@ public class HexMesh : MonoBehaviour
         }
         else
         {
-            AddTriangle(left, right, boundary);
+            //AddTriangle(left, right, boundary);
+            //这里不再扰动分界点
+            AddTriangleUnperturbed(Perturb(left), Perturb(right), boundary);
             AddTriangleColor(leftCell.color, rightCell.color, boundaryColor);
         }
     }

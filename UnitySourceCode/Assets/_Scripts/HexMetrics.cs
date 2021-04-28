@@ -9,13 +9,13 @@ public static class HexMetrics
     public const float innerRadius = outerRadius * 0.866025404f;
 
     //cell自身颜色区域，为75%外接圆半径
-    public const float solidFactor = 0.75f;
+    public const float solidFactor = 0.8f;
 
     //cell的颜色混合区域，为25%外接圆半径
     public const float blendFactor = 1f - solidFactor;
 
     //地图中每个高度等级之间相差的实际距离
-    public const float elevationStep = 5f;
+    public const float elevationStep = 3f;
 
     //每个连接部分阶梯的数量
     public const int terracesPerSlope = 2;
@@ -39,7 +39,7 @@ public static class HexMetrics
     //扰动强度
     //这个值是一个坐标点在每个轴向上的偏移强度
     //最大偏移量就是 √￣(3*5^2) ≈ 8.66
-    public const float cellPerturbStrength = 5f;
+    public const float cellPerturbStrength = 4f;
 
     //采样缩放
     //这个参数的实际作用，就是将时间空间内坐标缩小一定倍率

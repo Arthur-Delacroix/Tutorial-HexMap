@@ -52,6 +52,11 @@ public static class HexMetrics
     //改为对一个cell整体海拔高度进行扰动，然后再乘以一个强度系数
     public const float elevationPerturbStrength = 1.5f;
 
+    //应为Unity mesh最多只能有65000个顶点，想要尺寸更大的地图，就只能将多个chunk拼接起来
+    //这里定义整个地图的尺寸，决定了是由多少个chunk组成的
+    public const int chunkSizeX = 5;
+    public const int chunkSizeZ = 5;
+
     //正六边形的六个顶点位置，其姿态为角朝上，从最上面一个顶点开始计算位置
     //根据正六边形中点的位置，顺时针依次定义6个顶点的位置
     private static Vector3[] corners =

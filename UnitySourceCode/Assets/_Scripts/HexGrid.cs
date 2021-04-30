@@ -5,11 +5,16 @@ using UnityEngine.UI;
 
 public class HexGrid : MonoBehaviour
 {
-    //表示每一行有多少个地图单元
-    public int width = 6;
 
+    //表示每一行有多少个地图单元
+    //public int height = 6;
     //表示每一列有多少个地图单元
-    public int height = 6;
+    //public int width = 6;
+
+    //这里使用新的变量来初始化cells的尺寸
+    //这两个变量的值可以通过地图中有几个chunk和每个chunk的尺寸计算出来
+    private int cellCountX = 6;
+    private int cellCountZ = 6;
 
     //存放地图单元格的预置
     public HexCell cellPrefab;
@@ -34,6 +39,10 @@ public class HexGrid : MonoBehaviour
     //彩色噪点图的实例，直接将图片拖拽至Inspector面板对应位置赋初始值
     public Texture2D noiseSource;
 
+    //定义一个chunk是有多少个cell组成的
+    public int chunkCountX = 4;
+    public int chunkCountZ = 3;
+
     private void Awake()
     {
         //为HexMetrics的静态变量赋值
@@ -47,12 +56,35 @@ public class HexGrid : MonoBehaviour
         gridCanvas = GetComponentInChildren<Canvas>();
 
         //根据长度和宽度，初始化数组大小
-        cells = new HexCell[height * width];
+        //cells = new HexCell[cellCountZ * cellCountX];
 
         //从左下角开始，依次往右，每一行为 width 个单元后，上移一行
-        for (int z = 0, i = 0; z < height; z++)
+        //for (int z = 0, i = 0; z < cellCountZ; z++)
+        //{
+        //    for (int x = 0; x < cellCountX; x++)
+        //    {
+        //        CreateCell(x, z, i++);
+        //    }
+        //}
+
+        //计算出整个地图横向和纵向cell的个数，也就是二维数组的长和宽
+        cellCountX = chunkCountX * HexMetrics.chunkSizeX;
+        cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
+
+        CreateCells();
+    }
+
+    /// <summary>
+    /// 初始化存储cell实例的数组
+    /// </summary>
+    private void CreateCells()
+    {
+        //通过计算出来的长和宽，对数组进行初始化
+        cells = new HexCell[cellCountZ * cellCountX];
+
+        for (int z = 0, i = 0; z < cellCountZ; z++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < cellCountX; x++)
             {
                 CreateCell(x, z, i++);
             }
@@ -120,7 +152,7 @@ public class HexGrid : MonoBehaviour
 
         //计算出cell位于cells[]数组中的位置
         //在四边形网格中就是X+Z乘以宽度，但在这里还需要加上一半的Z轴偏移。????
-        int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
+        int index = coordinates.X + coordinates.Z * cellCountX + coordinates.Z / 2;
 
         //Debug.Log(index);
 
@@ -170,7 +202,7 @@ public class HexGrid : MonoBehaviour
     {
         position = transform.InverseTransformPoint(position);
         HexCoordinates coordinates = HexCoordinates.FromPosition(position);
-        int index = coordinates.X + coordinates.Z * width + coordinates.Z / 2;
+        int index = coordinates.X + coordinates.Z * cellCountX + coordinates.Z / 2;
 
         //返回被点击cell的实例
         return cells[index];
@@ -251,26 +283,26 @@ public class HexGrid : MonoBehaviour
             {
                 //当为偶数行的时候，创建 SE-NW 方向的链接
                 //cells[i - width]为SE方向的实例，也就是右下方的cell
-                cell.SetNeighbor(HexDirection.SE, cells[i - width]);
+                cell.SetNeighbor(HexDirection.SE, cells[i - cellCountX]);
 
                 //每行的第一个cell是没有左下角(SW)方向的链接，这里要判断cell是否为第一个
                 if (x > 0)
                 {
                     //cells[i - width - 1]为SW方向的实例，也就是左下方的cell，创建SW-NE方向的链接
-                    cell.SetNeighbor(HexDirection.SW, cells[i - width - 1]);
+                    cell.SetNeighbor(HexDirection.SW, cells[i - cellCountX - 1]);
                 }
             }
             //这里是奇数行建立链接的部分
             else
             {
                 //i - width 为自身SW方向的实例
-                cell.SetNeighbor(HexDirection.SW, cells[i - width]);
+                cell.SetNeighbor(HexDirection.SW, cells[i - cellCountX]);
 
                 //判断奇数行cell是否为每行最后一个，因为奇数行最后一个cell是没有SE方向的实例
-                if (x < width - 1)
+                if (x < cellCountX - 1)
                 {
                     //i - width + 1 为奇数行自身SE方向的实例
-                    cell.SetNeighbor(HexDirection.SE, cells[i - width + 1]);
+                    cell.SetNeighbor(HexDirection.SE, cells[i - cellCountX + 1]);
                 }
             }
         }

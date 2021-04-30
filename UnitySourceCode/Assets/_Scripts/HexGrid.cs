@@ -13,8 +13,8 @@ public class HexGrid : MonoBehaviour
 
     //这里使用新的变量来初始化cells的尺寸
     //这两个变量的值可以通过地图中有几个chunk和每个chunk的尺寸计算出来
-    private int cellCountX = 6;
-    private int cellCountZ = 6;
+    private int cellCountX;
+    private int cellCountZ;
 
     //存放地图单元格的预置
     public HexCell cellPrefab;
@@ -39,9 +39,16 @@ public class HexGrid : MonoBehaviour
     //彩色噪点图的实例，直接将图片拖拽至Inspector面板对应位置赋初始值
     public Texture2D noiseSource;
 
-    //定义一个chunk是有多少个cell组成的
+    //定义整个地图长宽各有多少个chunk
     public int chunkCountX = 4;
     public int chunkCountZ = 3;
+
+    //逻辑变成了 地图初始化 -> 创建chunk ->创建cell
+    //这里要先引用Chunk的Prefab
+    public HexGridChunk chunkPrefab;
+
+    //用来存储实例化的chunk
+    private HexGridChunk[] chunks;
 
     private void Awake()
     {
@@ -71,7 +78,29 @@ public class HexGrid : MonoBehaviour
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
 
+        CreateChunks();
+
         CreateCells();
+    }
+
+
+    /// <summary>
+    /// 创建地图块，并将创建的实例循环添加至数组chunks中
+    /// </summary>
+    private void CreateChunks()
+    {
+        //设置数组长宽
+        chunks = new HexGridChunk[chunkCountX * chunkCountZ];
+
+        //双循环，将创建的chunk实例添加到chunks数组中
+        for (int z = 0, i = 0; z < chunkCountZ; z++)
+        {
+            for (int x = 0; x < chunkCountX; x++)
+            {
+                HexGridChunk chunk = chunks[i++] = Instantiate(chunkPrefab);
+                chunk.transform.SetParent(transform);
+            }
+        }
     }
 
     /// <summary>
@@ -101,7 +130,7 @@ public class HexGrid : MonoBehaviour
     private void Start()
     {
         //调用绘制mesh的方法
-        hexMesh.Triangulate(cells);
+        //hexMesh.Triangulate(cells);
     }
 
     private void Update()

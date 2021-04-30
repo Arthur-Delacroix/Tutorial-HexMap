@@ -53,7 +53,7 @@ public static class HexMetrics
     public const float elevationPerturbStrength = 1.5f;
 
     //应为Unity mesh最多只能有65000个顶点，想要尺寸更大的地图，就只能将多个chunk拼接起来
-    //这里定义整个地图的尺寸，决定了是由多少个chunk组成的
+    //这里定义一个chunk的长宽各有几个cell
     public const int chunkSizeX = 5;
     public const int chunkSizeZ = 5;
 

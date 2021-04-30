@@ -1490,8 +1490,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92b70bedd42804a368cfd2d57e26ded3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 6
-  height: 6
   cellPrefab: {fileID: 3764777292931497851, guid: deb8a8b782a234a828614f11050e4c9f,
     type: 3}
   cellLabelPrefab: {fileID: 9029589587053216593, guid: ea3db1046ea710d4b9f9f0c28904d5da,
@@ -1499,6 +1497,10 @@ MonoBehaviour:
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   touchedColor: {r: 1, g: 0, b: 1, a: 1}
   noiseSource: {fileID: 2800000, guid: ded15a7895f29bb4084a604688b4a700, type: 3}
+  chunkCountX: 4
+  chunkCountZ: 3
+  chunkPrefab: {fileID: 3327030219185371730, guid: 3932d55d58af97440bf42b154810ff95,
+    type: 3}
 --- !u!4 &1119327825
 Transform:
   m_ObjectHideFlags: 0

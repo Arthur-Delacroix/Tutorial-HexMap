@@ -280,7 +280,8 @@ public class HexGrid : MonoBehaviour
         cell = cells[i];
 
         //设置被实例化地图单元的父级和位置
-        cell.transform.SetParent(transform, false);
+        //这里不再对cell实例设置父级，将其分配到对应chunk后，由chunk进行实例父级的设置
+        //cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
 
         //在不改变cell排列的情况下，重新计算每个cell的坐标位置
@@ -340,7 +341,8 @@ public class HexGrid : MonoBehaviour
         Text label = Instantiate<Text>(cellLabelPrefab);
 
         //设置该label的父级，也就是canvas
-        label.rectTransform.SetParent(gridCanvas.transform, false);
+        //这里不再设置label的父级，而是将其分配到对应chunk中，由chunk进行父级的设置
+        //label.rectTransform.SetParent(gridCanvas.transform, false);
 
         //设置label的位置，与被实例化的cell位置相同
         label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
@@ -356,5 +358,30 @@ public class HexGrid : MonoBehaviour
 
         //在地图初始状态下，每个cell的海拔高度都经过扰动
         cell.Elevation = 0;
+
+        AddCellToChunk(x, z, cell);
+    }
+
+    /// <summary>
+    /// 通过cell在数组中的坐标计算后，将其分配到对应的chunk中
+    /// </summary>
+    /// <param name="x">cell在整体数组中的横坐标</param>
+    /// <param name="z">cell在整体数组中的纵坐标</param>
+    /// <param name="cell">cell自身的实例</param>
+    private void AddCellToChunk(int x, int z, HexCell cell)
+    {
+        //通过cell整体数组的横纵坐标，计算出cell属于哪个chunk
+        int chunkX = x / HexMetrics.chunkSizeX;
+        int chunkZ = z / HexMetrics.chunkSizeZ;
+
+        //通过计算得到的坐标，获取对应chunk的实例
+        HexGridChunk chunk = chunks[chunkX + chunkZ * chunkCountX];
+
+        //通过cell整体数组坐标，计算出其在对应chunk数组中的下标
+        int localX = x - chunkX * HexMetrics.chunkSizeX;
+        int localZ = z - chunkZ * HexMetrics.chunkSizeZ;
+
+        //得到下标后，将cell实例添加到对应chunk的数组中
+        chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
     }
 }

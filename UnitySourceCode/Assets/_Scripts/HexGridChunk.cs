@@ -25,4 +25,19 @@ public class HexGridChunk : MonoBehaviour
         //之后会将实例分配到各个HexGridChunk的数组中，这样再进行mesh的构建
         hexMesh.Triangulate(cells);
     }
+
+    /// <summary>
+    /// 将cell实例添加到自身的数组中
+    /// </summary>
+    /// <param name="index">cell在自身数组的下标</param>
+    /// <param name="cell">cell的实例</param>
+    public void AddCell(int index, HexCell cell)
+    {
+        //通过下标将cell实例添加到数组中
+        cells[index] = cell;
+
+        //设置cell和cell UI的父节点
+        cell.transform.SetParent(transform, false);
+        cell.uiRect.SetParent(gridCanvas.transform, false);
+    }
 }

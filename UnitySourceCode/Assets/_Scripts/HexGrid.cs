@@ -26,10 +26,10 @@ public class HexGrid : MonoBehaviour
     [SerializeField] private Text cellLabelPrefab;
 
     //Text Prefab的父级Canvas
-    private Canvas gridCanvas;
+    //private Canvas gridCanvas;
 
     //存储Hex Mesh物体上的hexMesh脚本组件
-    private HexMesh hexMesh;
+    //private HexMesh hexMesh;
 
     //cell的默认颜色
     public Color defaultColor = Color.white;
@@ -57,10 +57,10 @@ public class HexGrid : MonoBehaviour
         HexMetrics.noiseSource = noiseSource;
 
         //获取Hex Mesh物体上的hexMesh脚本组件实例
-        hexMesh = GetComponentInChildren<HexMesh>();
+        //hexMesh = GetComponentInChildren<HexMesh>();
 
         //获取Hex Grid子物体下d Canvas组件
-        gridCanvas = GetComponentInChildren<Canvas>();
+        //gridCanvas = GetComponentInChildren<Canvas>();
 
         //根据长度和宽度，初始化数组大小
         //cells = new HexCell[cellCountZ * cellCountX];
@@ -127,12 +127,6 @@ public class HexGrid : MonoBehaviour
         HexMetrics.noiseSource = noiseSource;
     }
 
-    private void Start()
-    {
-        //调用绘制mesh的方法
-        //hexMesh.Triangulate(cells);
-    }
-
     private void Update()
     {
         //之后鼠标点击交互相关代码会移动到其他脚本中
@@ -192,7 +186,7 @@ public class HexGrid : MonoBehaviour
         cell.color = touchedColor;
 
         //重新构建整个map的mesh
-        hexMesh.Triangulate(cells);
+        //hexMesh.Triangulate(cells);
 
         //Debug.Log("touched at " + coordinates.ToString());
 
@@ -240,10 +234,10 @@ public class HexGrid : MonoBehaviour
     /// <summary>
     /// 重新构建整个地图
     /// </summary>
-    public void Refresh()
-    {
-        hexMesh.Triangulate(cells);
-    }
+    //public void Refresh()
+    //{
+    //    hexMesh.Triangulate(cells);
+    //}
 
     /// <summary>
     /// 创建一个地图单元

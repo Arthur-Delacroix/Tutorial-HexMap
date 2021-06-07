@@ -60,7 +60,7 @@ public class HexMapEditor : MonoBehaviour
     /// <param name="cell">被点击cell的实例</param>
     private void EditCell(HexCell cell)
     {
-        cell.color = activeColor;
+        cell.Color = activeColor;
         cell.Elevation = activeElevation;
         //hexGrid.Refresh();
     }

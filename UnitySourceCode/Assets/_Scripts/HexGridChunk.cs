@@ -19,12 +19,12 @@ public class HexGridChunk : MonoBehaviour
         cells = new HexCell[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
     }
 
-    private void Start()
-    {
-        //cell实例会由HexGrid创建
-        //之后会将实例分配到各个HexGridChunk的数组中，这样再进行mesh的构建
-        hexMesh.Triangulate(cells);
-    }
+    //private void Start()
+    //{
+    //    cell实例会由HexGrid创建
+    //    之后会将实例分配到各个HexGridChunk的数组中，这样再进行mesh的构建
+    //    hexMesh.Triangulate(cells);
+    //}
 
     /// <summary>
     /// 将cell实例添加到自身的数组中
@@ -36,8 +36,29 @@ public class HexGridChunk : MonoBehaviour
         //通过下标将cell实例添加到数组中
         cells[index] = cell;
 
+        //将chunk自身实例添加到cell中，这样cell就知道自己属于哪个chunk了
+        cell.chunk = this;
+
         //设置cell和cell UI的父节点
         cell.transform.SetParent(transform, false);
         cell.uiRect.SetParent(gridCanvas.transform, false);
+    }
+
+    /// <summary>
+    /// 重新构建当前chunk内的所有cell
+    /// </summary>
+    public void Refresh()
+    {
+        //hexMesh.Triangulate(cells);
+        
+        //需要对当前Chunk刷新时，就启用当前脚本
+        enabled = true;
+    }
+
+    private void LateUpdate()
+    {
+        //完成三角构建后，就停用当前脚本，这样就不会发生重复刷新的问题了
+        hexMesh.Triangulate(cells);
+        enabled = false;
     }
 }

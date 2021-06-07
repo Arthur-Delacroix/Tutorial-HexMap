@@ -7,16 +7,21 @@ public class HexCell : MonoBehaviour
     public HexCoordinates coordinates;
 
     //存储cell自身的颜色
-    public Color color;
+    //public Color color;
 
     //用来存储每个cell的neighbors
     [SerializeField] private HexCell[] neighbors = null;
 
     //表示每个cell的高度等级，0即在水平面位置上
-    private int elevation;
+    //private int elevation;
+    //为高度赋初始值，这样避免了初始值为0，新输入的值也为0，不会刷新mesh的问题
+    private int elevation = int.MinValue;
 
     //自身坐标UI的RectTransform组件实例
     public RectTransform uiRect;
+
+    //引用当前其所在的地图块
+    public HexGridChunk chunk;
 
     //获取cell在扰动后的实际坐标位置
     public Vector3 Position
@@ -27,6 +32,30 @@ public class HexCell : MonoBehaviour
         }
     }
 
+    private Color color;
+
+    //cell颜色
+    public Color Color
+    {
+        get
+        {
+            return color;
+        }
+        set
+        {
+            //当新颜色与现在颜色相同时，不再进行赋值和刷新
+            if (color == value)
+            {
+                return;
+            }
+
+            color = value;
+
+            Refresh();
+        }
+    }
+
+    //cell高度
     public int Elevation
     {
         get
@@ -35,6 +64,12 @@ public class HexCell : MonoBehaviour
         }
         set
         {
+            //当新的高度值赋值是，与旧的相同，直接返回，不执行之后的代码
+            if (elevation == value)
+            {
+                return;
+            }
+
             elevation = value;
 
             //在获取高度等级的时候，同时为cell的Mesh赋值相应的高度值
@@ -54,6 +89,9 @@ public class HexCell : MonoBehaviour
             uiPosition.z = -position.y;
 
             uiRect.localPosition = uiPosition;
+
+            //设置高度后刷新当前chunk
+            Refresh();
         }
     }
 
@@ -115,4 +153,27 @@ public class HexCell : MonoBehaviour
     //    Debug.Log(v1.ToString());
     //    Debug.Log(v2.ToString());
     //}
+
+    /// <summary>
+    /// 当自身状态改变时，刷新自身所在chunk的所有cell
+    /// </summary>
+    private void Refresh()
+    {
+        if (chunk != null)
+        {
+            chunk.Refresh();
+
+            //遍历自身当前所有相邻的cell
+            for (int i = 0; i < neighbors.Length; i++)
+            {
+                HexCell neighbor = neighbors[i];
+
+                //当自身与相邻cell不在同一个chunk时，刷新相邻的chunk
+                if (neighbor != null && neighbor.chunk != chunk)
+                {
+                    neighbor.chunk.Refresh();
+                }
+            }
+        }
+    }
 }

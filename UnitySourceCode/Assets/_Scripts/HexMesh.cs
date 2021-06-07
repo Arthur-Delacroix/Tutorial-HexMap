@@ -106,7 +106,7 @@ public class HexMesh : MonoBehaviour
         );
 
         //在计算出各个点的位置信息后，直接构建三角面片
-        TriangulateEdgeFan(center, e, cell.color);
+        TriangulateEdgeFan(center, e, cell.Color);
 
         //这两个Vector3变量，是原本构成cell一个三角面片的其中两个顶点位置。现在是颜色混合区域的两个顶点位置。
         //Vector3 v3 = center + HexMetrics.GetFirstCorner(direction);
@@ -423,10 +423,10 @@ public class HexMesh : MonoBehaviour
         //通过插值计算出相邻cell边的每个坐标点
         EdgeVertices e2 = EdgeVertices.TerraceLerp(begin, end, 1);
         //通过插值计算出相邻cell边每个坐标点的颜色
-        Color c2 = HexMetrics.TerraceLerp(beginCell.color, endCell.color, 1);
+        Color c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, 1);
 
         //构建阶梯的第一段
-        TriangulateEdgeStrip(begin, beginCell.color, e2, c2);
+        TriangulateEdgeStrip(begin, beginCell.Color, e2, c2);
 
         //循环生成中间部分
         for (int i = 2; i < HexMetrics.terraceSteps; i++)
@@ -434,12 +434,12 @@ public class HexMesh : MonoBehaviour
             EdgeVertices e1 = e2;
             Color c1 = c2;
             e2 = EdgeVertices.TerraceLerp(begin, end, i);
-            c2 = HexMetrics.TerraceLerp(beginCell.color, endCell.color, i);
+            c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, i);
             TriangulateEdgeStrip(e1, c1, e2, c2);
         }
 
         //构建阶梯的最后一段
-        TriangulateEdgeStrip(e2, c2, end, endCell.color);
+        TriangulateEdgeStrip(e2, c2, end, endCell.Color);
     }
 
 
@@ -520,7 +520,7 @@ public class HexMesh : MonoBehaviour
             //AddQuadColor(cell.color, neighbor.color);
 
             //这里也使用EdgeVertices计算的顶点来构建矩形
-            TriangulateEdgeStrip(e1, cell.color, e2, neighbor.color);
+            TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color);
         }
 
         //获取相邻方位的下一个方位 的cell
@@ -616,10 +616,10 @@ public class HexMesh : MonoBehaviour
         //这里先生成阶梯的第一个矩形面片。通过给定插值来计算出矩形面片的另外两个顶点
         Vector3 v3 = HexMetrics.TerraceLerp(beginLeft, endLeft, 1);
         Vector3 v4 = HexMetrics.TerraceLerp(beginRight, endRight, 1);
-        Color c2 = HexMetrics.TerraceLerp(beginCell.color, endCell.color, 1);
+        Color c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, 1);
 
         AddQuad(beginLeft, beginRight, v3, v4);
-        AddQuadColor(beginCell.color, c2);
+        AddQuadColor(beginCell.Color, c2);
 
         //阶梯的其他矩形面片，可以通过循环来生成
         //旧的矩形面片终点V3 V4，就是新面片的起点 V1 V2
@@ -632,14 +632,14 @@ public class HexMesh : MonoBehaviour
             Color c1 = c2;
             v3 = HexMetrics.TerraceLerp(beginLeft, endLeft, i);
             v4 = HexMetrics.TerraceLerp(beginRight, endRight, i);
-            c2 = HexMetrics.TerraceLerp(beginCell.color, endCell.color, i);
+            c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, i);
             AddQuad(v1, v2, v3, v4);
             AddQuadColor(c1, c2);
         }
 
         //连接阶梯的剩余区域
         AddQuad(v3, v4, endLeft, endRight);
-        AddQuadColor(c2, endCell.color);
+        AddQuadColor(c2, endCell.Color);
     }
 
     /// <summary>
@@ -719,7 +719,7 @@ public class HexMesh : MonoBehaviour
             //这里先使用旧的方法来构建三角形连接区域，也就是没有阶梯化的那种
             //经过连接类型判断后，这个方法就会被代替掉
             AddTriangle(bottom, left, right);
-            AddTriangleColor(bottomCell.color, leftCell.color, rightCell.color);
+            AddTriangleColor(bottomCell.Color, leftCell.Color, rightCell.Color);
         }
     }
 
@@ -741,12 +741,12 @@ public class HexMesh : MonoBehaviour
         //计算出与begin相邻的两个cell，每个阶梯的顶点和其对应的颜色
         Vector3 v3 = HexMetrics.TerraceLerp(begin, left, 1);
         Vector3 v4 = HexMetrics.TerraceLerp(begin, right, 1);
-        Color c3 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, 1);
-        Color c4 = HexMetrics.TerraceLerp(beginCell.color, rightCell.color, 1);
+        Color c3 = HexMetrics.TerraceLerp(beginCell.Color, leftCell.Color, 1);
+        Color c4 = HexMetrics.TerraceLerp(beginCell.Color, rightCell.Color, 1);
 
         //与矩形阶梯区域不同的是，阶梯三角形连接区域最下端是一个三角形，这里先构建这个三角形
         AddTriangle(begin, v3, v4);
-        AddTriangleColor(beginCell.color, c3, c4);
+        AddTriangleColor(beginCell.Color, c3, c4);
 
         //循环获取中间部分的顶点位置和颜色信息
         for (int i = 2; i < HexMetrics.terraceSteps; i++)
@@ -757,15 +757,15 @@ public class HexMesh : MonoBehaviour
             Color c2 = c4;
             v3 = HexMetrics.TerraceLerp(begin, left, i);
             v4 = HexMetrics.TerraceLerp(begin, right, i);
-            c3 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, i);
-            c4 = HexMetrics.TerraceLerp(beginCell.color, rightCell.color, i);
+            c3 = HexMetrics.TerraceLerp(beginCell.Color, leftCell.Color, i);
+            c4 = HexMetrics.TerraceLerp(beginCell.Color, rightCell.Color, i);
             AddQuad(v1, v2, v3, v4);
             AddQuadColor(c1, c2, c3, c4);
         }
 
         //构建剩余的部分
         AddQuad(v3, v4, left, right);
-        AddQuadColor(c3, c4, leftCell.color, rightCell.color);
+        AddQuadColor(c3, c4, leftCell.Color, rightCell.Color);
     }
 
     /// <summary>
@@ -797,7 +797,7 @@ public class HexMesh : MonoBehaviour
         //Vector3 boundary = Vector3.Lerp(begin, right, b);
         //这里使用扰动后的坐标点计算分界点
         Vector3 boundary = Vector3.Lerp(Perturb(begin), Perturb(right), b);
-        Color boundaryColor = Color.Lerp(beginCell.color, rightCell.color, b);
+        Color boundaryColor = Color.Lerp(beginCell.Color, rightCell.Color, b);
 
         //测试通过插值找到的三角形上一点是否正确
         //AddTriangle(begin, left, boundary);
@@ -819,7 +819,7 @@ public class HexMesh : MonoBehaviour
             //AddTriangle(left, right, boundary);
             //这里不再扰动分界点
             AddTriangleUnperturbed(Perturb(left), Perturb(right), boundary);
-            AddTriangleColor(leftCell.color, rightCell.color, boundaryColor);
+            AddTriangleColor(leftCell.Color, rightCell.Color, boundaryColor);
         }
     }
 
@@ -843,14 +843,14 @@ public class HexMesh : MonoBehaviour
         //Vector3 v2 = HexMetrics.TerraceLerp(begin, left, 1);
         //由于在此方法中，并没有用v2继续计算其他顶点，所以在这里先对v2进行扰动，之后代码中直接使用
         Vector3 v2 = Perturb(HexMetrics.TerraceLerp(begin, left, 1));
-        Color c2 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, 1);
+        Color c2 = HexMetrics.TerraceLerp(beginCell.Color, leftCell.Color, 1);
 
         //AddTriangle(begin, v2, boundary);
         //这里收束到边界点的时候，边界点不再进行扰动
         //AddTriangleUnperturbed(Perturb(begin), Perturb(v2), boundary);
         //使用扰动后的v2点
         AddTriangleUnperturbed(Perturb(begin), v2, boundary);
-        AddTriangleColor(beginCell.color, c2, boundaryColor);
+        AddTriangleColor(beginCell.Color, c2, boundaryColor);
 
         //循环创建中间部分的三角面片
         for (int i = 2; i < HexMetrics.terraceSteps; i++)
@@ -860,7 +860,7 @@ public class HexMesh : MonoBehaviour
             //v2 = HexMetrics.TerraceLerp(begin, left, i);
             //先对V2进行扰动
             v2 = Perturb(HexMetrics.TerraceLerp(begin, left, i));
-            c2 = HexMetrics.TerraceLerp(beginCell.color, leftCell.color, i);
+            c2 = HexMetrics.TerraceLerp(beginCell.Color, leftCell.Color, i);
             //AddTriangle(v1, v2, boundary);
             //这里收束到边界点的时候，边界点不再进行扰动
             //AddTriangleUnperturbed(Perturb(v1), Perturb(v2), boundary);
@@ -875,7 +875,7 @@ public class HexMesh : MonoBehaviour
         //AddTriangleUnperturbed(Perturb(v2), Perturb(left), boundary);
         //使用扰动后的v2点
         AddTriangleUnperturbed(v2, Perturb(left), boundary);
-        AddTriangleColor(c2, leftCell.color, boundaryColor);
+        AddTriangleColor(c2, leftCell.Color, boundaryColor);
     }
 
     /// <summary>
@@ -905,7 +905,7 @@ public class HexMesh : MonoBehaviour
         //Vector3 boundary = Vector3.Lerp(begin, left, b);
         //这里使用扰动后的坐标点计算分界点
         Vector3 boundary = Vector3.Lerp(Perturb(begin), Perturb(left), b);
-        Color boundaryColor = Color.Lerp(beginCell.color, leftCell.color, b);
+        Color boundaryColor = Color.Lerp(beginCell.Color, leftCell.Color, b);
 
         //TriangulateBoundaryTriangle(begin, beginCell, left, leftCell, boundary, boundaryColor);
         TriangulateBoundaryTriangle(right, rightCell, begin, beginCell, boundary, boundaryColor);
@@ -919,7 +919,7 @@ public class HexMesh : MonoBehaviour
             //AddTriangle(left, right, boundary);
             //这里不再扰动分界点
             AddTriangleUnperturbed(Perturb(left), Perturb(right), boundary);
-            AddTriangleColor(leftCell.color, rightCell.color, boundaryColor);
+            AddTriangleColor(leftCell.Color, rightCell.Color, boundaryColor);
         }
     }
 

@@ -183,7 +183,7 @@ public class HexGrid : MonoBehaviour
         HexCell cell = cells[index];
 
         //为这个cell赋值颜色
-        cell.color = touchedColor;
+        cell.Color = touchedColor;
 
         //重新构建整个map的mesh
         //hexMesh.Triangulate(cells);
@@ -282,7 +282,7 @@ public class HexGrid : MonoBehaviour
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
 
         //为每个cell赋颜色初始值
-        cell.color = defaultColor;
+        cell.Color = defaultColor;
 
         //以下为将 周围cell与自身相链接的代码部分----------------------------------------
         //判断cell是否为每一行第一个

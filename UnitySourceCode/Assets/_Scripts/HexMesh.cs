@@ -10,16 +10,19 @@ public class HexMesh : MonoBehaviour
     private Mesh hexMesh;
 
     //存储所有正六边形的顶点位置信息
-    private List<Vector3> vertices;
+    //private List<Vector3> vertices;
+    private static List<Vector3> vertices = new List<Vector3>();
 
     //索引，每个三角面片顶点的渲染顺序
-    private List<int> triangles;
+    //private List<int> triangles;
+    private static List<int> triangles = new List<int>();
 
     //为了检测射线碰撞Collider
     private MeshCollider meshCollider;
 
     //存储cell每个顶点的颜色信息
-    private List<Color> colors;
+    //private List<Color> colors;
+    private static List<Color> colors = new List<Color>();
 
     private void Awake()
     {
@@ -31,11 +34,11 @@ public class HexMesh : MonoBehaviour
         meshCollider = gameObject.AddComponent<MeshCollider>();
 
         //初始化vertices、triangles链表 用于存储顶点和面片信息
-        vertices = new List<Vector3>();
-        triangles = new List<int>();
+        //vertices = new List<Vector3>();
+        //triangles = new List<int>();
 
         //初始化colors链表，用于存储顶点颜色信息
-        colors = new List<Color>();
+        //colors = new List<Color>();
     }
 
     /// <summary>

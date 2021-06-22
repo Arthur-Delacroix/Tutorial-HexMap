@@ -644,7 +644,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_FirstSelected: {fileID: 0}
-  m_sendNavigationEvents: 1
+  m_sendNavigationEvents: 0
   m_DragThreshold: 10
 --- !u!4 &510548025
 Transform:
@@ -2446,9 +2446,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca68cbeb08dc03f46a128fd4f6a8d3d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  grid: {fileID: 1119327824}
   swivel: {fileID: 1809367349}
   stick: {fileID: 858429663}
+  moveSpeedMinZoom: 400
+  moveSpeedMaxZoom: 100
   stickMinZoom: -250
   stickMaxZoom: -45
   swivelMinZoom: 90
   swivelMaxZoom: 45
+  zoomSensitivity: 4

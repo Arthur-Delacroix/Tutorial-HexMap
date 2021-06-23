@@ -34,12 +34,17 @@ public class HexMapCamera : MonoBehaviour
     //控制鼠标滚轮灵敏度，数值越大，速度越慢
     [SerializeField] private float zoomSensitivity = 4;
 
-    private void Awake()
-    {
-        //获取对应的实例
-        //swivel = transform.GetChild(0);
-        //stick = swivel.GetChild(0);
-    }
+    //camera的旋转速率
+    public float rotationSpeed;
+    //用于记录旋转角度
+    private float rotationAngle;
+
+    //private void Awake()
+    //{
+    //获取对应的实例
+    //swivel = transform.GetChild(0);
+    //stick = swivel.GetChild(0);
+    //}
 
     private void Update()
     {
@@ -56,6 +61,14 @@ public class HexMapCamera : MonoBehaviour
         if (xDelta != 0f || zDelta != 0f)
         {
             AdjustPosition(xDelta, zDelta);
+        }
+
+        //检测 旋转 按键按下
+        //默认在project settings -> input 中没有Rotation输入检测，需要添加
+        float rotationDelta = Input.GetAxis("Rotation");
+        if (rotationDelta != 0f)
+        {
+            AdjustRotation(rotationDelta);
         }
     }
 
@@ -95,7 +108,7 @@ public class HexMapCamera : MonoBehaviour
         float damping = Mathf.Max(Mathf.Abs(xDelta), Mathf.Abs(zDelta));
 
         //camera的移动方向
-        Vector3 direction = new Vector3(xDelta, 0f, zDelta).normalized;
+        Vector3 direction = transform.localRotation * new Vector3(xDelta, 0f, zDelta).normalized;
 
         //根据当前视距计算移动速度
         float moveSpeed = Mathf.Lerp(moveSpeedMinZoom, moveSpeedMaxZoom, zoom);
@@ -137,5 +150,28 @@ public class HexMapCamera : MonoBehaviour
         position.z = Mathf.Clamp(position.z, 0f, zMax);
 
         return position;
+    }
+
+    /// <summary>
+    /// 控制camera旋转
+    /// </summary>
+    /// <param name="delta">旋转输入增量</param>
+    private void AdjustRotation(float delta)
+    {
+        //通过时间增量获取旋转角度
+        rotationAngle += delta * rotationSpeed * Time.deltaTime;
+
+        //将旋转角度控制在0-360之间
+        if (rotationAngle < 0f)
+        {
+            rotationAngle += 360f;
+        }
+        else if (rotationAngle >= 360f)
+        {
+            rotationAngle -= 360f;
+        }
+
+        //旋转根节点物体即可达到旋转camera视角的效果
+        transform.localRotation = Quaternion.Euler(0f, rotationAngle, 0f);
     }
 }

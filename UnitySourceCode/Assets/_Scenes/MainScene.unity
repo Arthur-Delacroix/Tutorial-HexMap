@@ -2456,3 +2456,4 @@ MonoBehaviour:
   swivelMinZoom: 90
   swivelMaxZoom: 45
   zoomSensitivity: 4
+  rotationSpeed: 180

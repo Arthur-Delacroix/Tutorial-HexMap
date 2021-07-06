@@ -18,6 +18,12 @@ public class HexMapEditor : MonoBehaviour
     //这里使用指定的camera代替 Camera.main方式，避免遍历场景中的Object
     [SerializeField] private Camera mainCamera = null;
 
+    //表示当前是否可以修改cell的颜色
+    private bool applyColor;
+
+    //是否启用修改cell高度的功能
+    private bool applyElevation = true;
+
     private void Awake()
     {
         //为activeColor赋初始值
@@ -60,9 +66,22 @@ public class HexMapEditor : MonoBehaviour
     /// <param name="cell">被点击cell的实例</param>
     private void EditCell(HexCell cell)
     {
-        cell.Color = activeColor;
-        cell.Elevation = activeElevation;
+        //cell.Color = activeColor;
+
+        //当applyColor为true，也就是索引值大于等于0，才会修改cell的颜色
+        if (applyColor)
+        {
+            cell.Color = activeColor;
+        }
+
+        //cell.Elevation = activeElevation;
         //hexGrid.Refresh();
+
+        //当toggle勾选时，才会修改cell的高度
+        if (applyElevation)
+        {
+            cell.Elevation = activeElevation;
+        }
     }
 
     /// <summary>
@@ -71,7 +90,14 @@ public class HexMapEditor : MonoBehaviour
     /// <param name="_index">备选颜色数组colors 中的颜色值索引</param>
     public void SelectColor(int _index)
     {
-        activeColor = colors[_index];
+        //activeColor = colors[_index];
+
+        //当传入的索引值大于0的时候，才会获取当前选中的颜色
+        applyColor = _index >= 0;
+        if (applyColor)
+        {
+            activeColor = colors[_index];
+        }
     }
 
     /// <summary>
@@ -81,5 +107,14 @@ public class HexMapEditor : MonoBehaviour
     public void SetElevation(float elevation)
     {
         activeElevation = (int)elevation;
+    }
+
+    /// <summary>
+    /// 当高度修改的toggle点击时，调用此方法
+    /// </summary>
+    /// <param name="toggle">toggle当前是否被选中</param>
+    public void SetApplyElevation(bool toggle)
+    {
+        applyElevation = toggle;
     }
 }

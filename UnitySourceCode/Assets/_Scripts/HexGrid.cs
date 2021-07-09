@@ -218,9 +218,10 @@ public class HexGrid : MonoBehaviour
 
 
     /// <summary>
-    /// 获取背点击cell的实例
+    /// 通过鼠标点击的Unity坐标值，来获取被点击cell的实例
     /// </summary>
     /// <param name="_position">鼠标点击hexmap的位置</param>
+    /// <returns>对应被点击位置的cell实例</returns>
     public HexCell GetCell(Vector3 position)
     {
         position = transform.InverseTransformPoint(position);
@@ -229,6 +230,29 @@ public class HexGrid : MonoBehaviour
 
         //返回被点击cell的实例
         return cells[index];
+    }
+
+    /// <summary>
+    /// 通过hexmap中的坐标，来获取cell的实例
+    /// </summary>
+    /// <param name="coordinates">hexmap中cell的坐标</param>
+    /// <returns>对应hexmap坐标值的cell实例</returns>
+    public HexCell GetCell(HexCoordinates coordinates)
+    {
+        //为了避免产生数组越界，这里要先检查X和Z坐标是否在范围内
+        int z = coordinates.Z;
+        if (z < 0 || z >= cellCountZ)
+        {
+            return null;
+        }
+
+        int x = coordinates.X + z / 2;
+        if (x < 0 || x >= cellCountX)
+        {
+            return null;
+        }
+
+        return cells[x + z * cellCountX];
     }
 
     /// <summary>

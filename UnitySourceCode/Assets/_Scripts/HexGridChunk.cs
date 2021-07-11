@@ -17,6 +17,9 @@ public class HexGridChunk : MonoBehaviour
     {
         //设置其存储cell数组的长宽
         cells = new HexCell[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
+
+        //默认关闭坐标的UI显示
+        ShowUI(false);
     }
 
     //private void Start()
@@ -60,5 +63,14 @@ public class HexGridChunk : MonoBehaviour
         //完成三角构建后，就停用当前脚本，这样就不会发生重复刷新的问题了
         hexMesh.Triangulate(cells);
         enabled = false;
+    }
+
+    /// <summary>
+    /// 控制当前地图块上的坐标显示UI 关闭/显示
+    /// </summary>
+    /// <param name="visible">UI坐标显示状态</param>
+    public void ShowUI(bool visible)
+    {
+        gridCanvas.gameObject.SetActive(visible);
     }
 }

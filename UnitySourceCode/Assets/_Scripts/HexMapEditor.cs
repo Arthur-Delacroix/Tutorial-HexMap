@@ -163,9 +163,21 @@ public class HexMapEditor : MonoBehaviour
         applyElevation = toggle;
     }
 
-    //通过组件获取当前笔刷的尺寸
+    /// <summary>
+    /// 通过UI组件修改当前笔刷的尺寸
+    /// </summary>
+    /// <param name="size">Slider中设置的笔刷尺寸值</param>
     public void SetBrushSize(float size)
     {
         brushSize = (int)size;
+    }
+
+    /// <summary>
+    /// 通过UI组件修改坐标UI的显示/隐藏
+    /// </summary>
+    /// <param name="visible">UI坐标显示的状态</param>
+    public void ShowUI(bool visible)
+    {
+        hexGrid.ShowUI(visible);
     }
 }

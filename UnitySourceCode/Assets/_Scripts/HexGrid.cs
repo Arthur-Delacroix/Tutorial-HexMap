@@ -402,4 +402,16 @@ public class HexGrid : MonoBehaviour
         //得到下标后，将cell实例添加到对应chunk的数组中
         chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
     }
+
+    /// <summary>
+    /// 控制所有地图块的坐标显示UI的 显示/隐藏
+    /// </summary>
+    /// <param name="visible">所有UI的显示状态</param>
+    public void ShowUI(bool visible)
+    {
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            chunks[i].ShowUI(visible);
+        }
+    }
 }

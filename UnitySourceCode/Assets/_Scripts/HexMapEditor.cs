@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class HexMapEditor : MonoBehaviour
 {
@@ -27,10 +28,19 @@ public class HexMapEditor : MonoBehaviour
     //笔刷的尺寸
     private int brushSize;
 
+    //显示当前选择高度的文本
+    [SerializeField] private Text elevationText = null;
+    //显示当前笔刷大小的文本
+    [SerializeField] private Text brushSizeText = null;
+
     private void Awake()
     {
         //为activeColor赋初始值
         SelectColor(0);
+
+        //设置高度和笔刷大小默认显示数值
+        elevationText.text = "Elevation: 0";
+        brushSizeText.text = "Brush Size: 0";
     }
 
     private void Update()
@@ -152,6 +162,9 @@ public class HexMapEditor : MonoBehaviour
     public void SetElevation(float elevation)
     {
         activeElevation = (int)elevation;
+
+        //在改变高度的同时，更新显示的文字信息
+        elevationText.text = "Elevation: " + elevation.ToString();
     }
 
     /// <summary>
@@ -170,6 +183,8 @@ public class HexMapEditor : MonoBehaviour
     public void SetBrushSize(float size)
     {
         brushSize = (int)size;
+
+        brushSizeText.text = "Brush Size: " + size.ToString();
     }
 
     /// <summary>

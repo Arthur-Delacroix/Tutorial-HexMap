@@ -184,6 +184,7 @@ public class HexMapEditor : MonoBehaviour
     {
         brushSize = (int)size;
 
+        //在设置笔刷大小的同时，更新显示的文字信息
         brushSizeText.text = "Brush Size: " + size.ToString();
     }
 

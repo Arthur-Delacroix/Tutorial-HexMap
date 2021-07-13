@@ -176,4 +176,87 @@ public class HexCell : MonoBehaviour
             }
         }
     }
+
+    //cell的河流部分--------------------------------------------------
+
+    //用来记录当前cell是否有河流 流入/流出
+    //只流出是河流起点，只流入是河流终点
+    private bool hasIncomingRiver;
+    private bool hasOutgoingRiver;
+
+    //记录河流的流入方位和流出方位
+    private HexDirection incomingRiver;
+    private HexDirection outgoingRiver;
+
+    //cell中是否有河流 流入/流出 以及 流入、流出方位，都使用属性来获取
+    //赋值部分会在其他的方法中进行
+
+    //获取cell是否有河流的流入
+    public bool HasIncomingRiver
+    {
+        get
+        {
+            return hasIncomingRiver;
+        }
+    }
+
+    //获取cell是否有河流的流出
+    public bool HasOutgoingRiver
+    {
+        get
+        {
+            return hasOutgoingRiver;
+        }
+    }
+
+    //获取cell中河流的流入方向
+    public HexDirection IncomingRiver
+    {
+        get
+        {
+            return incomingRiver;
+        }
+    }
+
+    //获取cell中河流的流出方向
+    public HexDirection OutgoingRiver
+    {
+        get
+        {
+            return outgoingRiver;
+        }
+    }
+
+    //获取当前cell中是否有河流
+    public bool HasRiver
+    {
+        get
+        {
+            return hasIncomingRiver || hasOutgoingRiver;
+        }
+    }
+
+    //获取当前的cell是否为河流的起点或终点
+    public bool HasRiverBeginOrEnd
+    {
+        get
+        {
+            return hasIncomingRiver != hasOutgoingRiver;
+        }
+    }
+
+    /// <summary>
+    /// 检查cell中指定方位的边是否有河流经过，不论是流入还是流出
+    /// </summary>
+    /// <param name="direction">当前cell指定方位的边</param>
+    /// <returns>true该边有河流经过，false该边没有河流经过</returns>
+    public bool HasRiverThroughEdge(HexDirection direction)
+    {
+        return
+            //检查指定方位是否有河流的流入
+            hasIncomingRiver && incomingRiver == direction
+            ||
+            //检查指定方位是否有河流的流出
+            hasOutgoingRiver && outgoingRiver == direction;
+    }
 }

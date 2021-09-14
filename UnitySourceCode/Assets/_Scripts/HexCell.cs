@@ -259,4 +259,69 @@ public class HexCell : MonoBehaviour
             //检查指定方位是否有河流的流出
             hasOutgoingRiver && outgoingRiver == direction;
     }
+
+    /// <summary>
+    /// 删除cell自身流出的河流
+    /// </summary>
+    public void RemoveOutgoingRiver()
+    {
+        //判断当前cell是否有流出的河流
+        //没有河流留出的话就直接跳出
+        if (hasOutgoingRiver == false)
+        {
+            return;
+        }
+
+        //有流出的河流，就将cell流出状态改为false，并刷新当前chunk
+        hasOutgoingRiver = false;
+        //Refresh();
+        //与改变高度和颜色不同，移除河流只会影响自身，所以只需要刷新自身mesh即可
+        //与其相邻的cell同理
+        RefreshSelfOnly();
+
+        //移除当前cell河流的流出部分，那就要同时移除相邻cell河流的流入部分
+        HexCell neighbor = GetNeighbor(outgoingRiver);
+        //将相邻cell流入的标记设置为false
+        neighbor.hasIncomingRiver = false;
+        //刷新相邻cell所在的chunk
+        //neighbor.Refresh();
+        neighbor.RefreshSelfOnly();
+    }
+
+    /// <summary>
+    /// 移除cell自身流入的河流
+    /// </summary>
+    public void RemoveIncomingRiver()
+    {
+        //思路与移除流出河流基本相同
+
+        if (hasIncomingRiver == false)
+        {
+            return;
+        }
+        hasIncomingRiver = false;
+        RefreshSelfOnly();
+
+        HexCell neighbor = GetNeighbor(incomingRiver);
+        neighbor.hasOutgoingRiver = false;
+        neighbor.RefreshSelfOnly();
+    }
+
+    /// <summary>
+    /// 刷新cell自身的mesh
+    /// </summary>
+    private void RefreshSelfOnly()
+    {
+        //当前并未完善河流编辑功能，目前先使用刷新chunk的方法
+        chunk.Refresh();
+    }
+
+    /// <summary>
+    /// 移除cell自身流入和流出的河流
+    /// </summary>
+    public void RemoveRiver()
+    {
+        RemoveOutgoingRiver();
+        RemoveIncomingRiver();
+    }
 }

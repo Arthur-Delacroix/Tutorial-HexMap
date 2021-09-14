@@ -64,7 +64,7 @@ public class HexCell : MonoBehaviour
         }
         set
         {
-            //当新的高度值赋值是，与旧的相同，直接返回，不执行之后的代码
+            //当新的高度值赋值时，与旧的相同，直接返回，不执行之后的代码
             if (elevation == value)
             {
                 return;
@@ -323,5 +323,46 @@ public class HexCell : MonoBehaviour
     {
         RemoveOutgoingRiver();
         RemoveIncomingRiver();
+    }
+
+    /// <summary>
+    /// 创建一条流出当前cell的河流
+    /// </summary>
+    /// <param name="direction">流出河流的方位</param>
+    public void SetOutgoingRiver(HexDirection direction)
+    {
+        //如果当前cell内有流出的河流，并且流出的方向与入参给出的方向相同，直接跳出
+        if (hasOutgoingRiver && outgoingRiver == direction)
+        {
+            return;
+        }
+
+        //与移除河流思路相似，同时为相邻的cell添加流入的河流
+        HexCell neighbor = GetNeighbor(direction);
+        //这里注意，如果没有相邻的cell，或者相邻的cell高于当前cell，都不可以创建河流
+        //河流是不会从低处流向高处的
+        if (!neighbor || elevation < neighbor.elevation)
+        {
+            return;
+        }
+
+        //移除当前cell中，与入参方向不同的那个流出的河流
+        RemoveOutgoingRiver();
+        //如果入参河流的方向，与流入当前cell河流的方向相同，那么还要移除流入当前cell 的河流
+        if (hasIncomingRiver && incomingRiver == direction)
+        {
+            RemoveIncomingRiver();
+        }
+
+        //设置流出标记和方向，并刷新当前cell
+        hasOutgoingRiver = true;
+        outgoingRiver = direction;
+        RefreshSelfOnly();
+
+        //移除相邻cell中旧的流入河流，设置流入标记和新的方位，并且刷新相邻的cell
+        neighbor.RemoveIncomingRiver();
+        neighbor.hasIncomingRiver = true;
+        neighbor.incomingRiver = direction.Opposite();
+        neighbor.RefreshSelfOnly();
     }
 }

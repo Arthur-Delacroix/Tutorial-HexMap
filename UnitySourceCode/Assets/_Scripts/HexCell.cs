@@ -90,6 +90,17 @@ public class HexCell : MonoBehaviour
 
             uiRect.localPosition = uiPosition;
 
+            //当前有河流从cell流出，如果流出cell高度小于相邻流入cell高度，这就是河流的逆流，移除流出河流
+            if (hasOutgoingRiver && elevation < GetNeighbor(outgoingRiver).elevation)
+            {
+                RemoveOutgoingRiver();
+            }
+            //与流出判断相类似，当流入cell高度大于流出cell高度时，也是逆流的情况
+            if (hasIncomingRiver && elevation > GetNeighbor(incomingRiver).elevation)
+            {
+                RemoveIncomingRiver();
+            }
+
             //设置高度后刷新当前chunk
             Refresh();
         }

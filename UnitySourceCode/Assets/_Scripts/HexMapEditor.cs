@@ -33,6 +33,14 @@ public class HexMapEditor : MonoBehaviour
     //显示当前笔刷大小的文本
     [SerializeField] private Text brushSizeText = null;
 
+    //河流编辑器的状态
+    private enum OptionalToggle
+    {
+        Ignore, Yes, No
+    }
+    //当前河流编辑器选中的状态
+    private OptionalToggle riverMode;
+
     private void Awake()
     {
         //为activeColor赋初始值
@@ -195,5 +203,14 @@ public class HexMapEditor : MonoBehaviour
     public void ShowUI(bool visible)
     {
         hexGrid.ShowUI(visible);
+    }
+
+    /// <summary>
+    /// 设置河流编辑器的状态
+    /// </summary>
+    /// <param name="mode">状态美剧索引值</param>
+    public void SetRiverMode(int mode)
+    {
+        riverMode = (OptionalToggle)mode;
     }
 }

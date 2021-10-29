@@ -59,6 +59,11 @@ public class HexMapEditor : MonoBehaviour
         {
             HandleInput();
         }
+        else
+        {
+            //当鼠标左键没有按下的时候，记录上一个经过的cell为空
+            previousCell = null;
+        }
     }
 
     /// <summary>
@@ -73,6 +78,7 @@ public class HexMapEditor : MonoBehaviour
 
         //检测射线是否碰撞到了collider
         RaycastHit _hit;
+
         if (Physics.Raycast(_inputRay, out _hit))
         {
             //hexGrid.ColorCell(_hit.point, activeColor);
@@ -81,7 +87,31 @@ public class HexMapEditor : MonoBehaviour
             //EditCell(hexGrid.GetCell(_hit.point));
 
             //带笔刷 修改多个cell
-            EditCells(hexGrid.GetCell(_hit.point));
+            //EditCells(hexGrid.GetCell(_hit.point));
+
+            //记录当前射线碰撞到的cell
+            HexCell currentCell = hexGrid.GetCell(_hit.point);
+
+            //判断当前cell与之前的cell是否为同一个
+            //如果是，就是在拖拽
+            if (previousCell && previousCell != currentCell)
+            {
+                ValidateDrag(currentCell);
+            }
+            else
+            {
+                isDrag = false;
+            }
+
+            //记录当前正在编辑的cell
+            EditCells(currentCell);
+            //目前上一个cell与当前cell是一个
+            previousCell = currentCell;
+        }
+        else
+        {
+            //当鼠标的射线未触碰到地图的时候，上一个经过的cell为空
+            previousCell = null;
         }
     }
 
@@ -205,12 +235,45 @@ public class HexMapEditor : MonoBehaviour
         hexGrid.ShowUI(visible);
     }
 
+    //以下是河流相关的参数和方法=====================
+
     /// <summary>
     /// 设置河流编辑器的状态
     /// </summary>
-    /// <param name="mode">状态美剧索引值</param>
+    /// <param name="mode">状态枚举索引值</param>
     public void SetRiverMode(int mode)
     {
         riverMode = (OptionalToggle)mode;
+    }
+
+    //判断当前是否处于拖拽状态
+    private bool isDrag;
+
+    //判断鼠标在当前cell的移动方位
+    private HexDirection dragDirection;
+
+    //当鼠标到下一个cell 的时候，这里记录上一个cell
+    private HexCell previousCell;
+
+    /// <summary>
+    /// 确认拖拽方向
+    /// </summary>
+    /// <param name="currentCell">当前射线所碰撞到的cell</param>
+    private void ValidateDrag(HexCell currentCell)
+    {
+        //循环遍历当前cell的6个方位
+        for (dragDirection = HexDirection.NE; dragDirection <= HexDirection.NW; dragDirection++)
+        {
+            //如果之前cell某个方位上的cell，与当前射线触碰到的cell相同，就证明发生了碰撞
+            //可以这样理解，当真实发生拖拽了，会记录下previousCell
+            //鼠标移动至新的cell后，开始检测previousCell在对应方位上是不是有新的cell
+            //如果有，就证明鼠标从previousCell拖拽移动到了新的cell上
+            if (previousCell.GetNeighbor(dragDirection) == currentCell)
+            {
+                isDrag = true;
+                return;
+            }
+        }
+        isDrag = false;
     }
 }

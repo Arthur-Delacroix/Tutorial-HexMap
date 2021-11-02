@@ -144,7 +144,7 @@ public static class HexMetrics
     public static Vector3 TerraceLerp(Vector3 a, Vector3 b, int step)
     {
         //单个步长的比例 与 步长的个数，计算出现在顶点所在的比例
-        float h = step * horizontalTerraceStepSize;
+        float h = step * HexMetrics.horizontalTerraceStepSize;
 
         //水平位置的X和Z，分别乘以 现在顶点所在的比例，得出该步长顶点的实际坐标
         a.x += (b.x - a.x) * h;

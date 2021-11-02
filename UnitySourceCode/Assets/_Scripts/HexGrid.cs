@@ -34,7 +34,7 @@ public class HexGrid : MonoBehaviour
     //cell的默认颜色
     public Color defaultColor = Color.white;
     //cell被点击后的颜色
-    public Color touchedColor = Color.magenta;
+    //public Color touchedColor = Color.magenta;
 
     //彩色噪点图的实例，直接将图片拖拽至Inspector面板对应位置赋初始值
     public Texture2D noiseSource;
@@ -160,7 +160,7 @@ public class HexGrid : MonoBehaviour
     /// 将射线的触碰点转换到自身的坐标系中
     /// </summary>
     /// <param name="position">触碰到的collider的位置</param>
-    private void TouchCell(Vector3 position)
+   /* private void TouchCell(Vector3 position)
     {
         //将触碰点的坐标系，转换到自身的坐标系
         position = transform.InverseTransformPoint(position);
@@ -192,7 +192,7 @@ public class HexGrid : MonoBehaviour
 
         //Debug.Log("touched at " + position);
         //Debug.Log("<color=#00FF00>原始坐标为" + position + "</color>");
-    }
+    }*/
 
     /// <summary>
     /// 为被点击的cell赋值对应的颜色

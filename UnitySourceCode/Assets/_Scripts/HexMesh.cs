@@ -612,38 +612,38 @@ public class HexMesh : MonoBehaviour
     /// <param name="endLeft">连接区域 连接到的neighbor的第一个终点</param>
     /// <param name="endRight">连接区域 连接到的neighbor的第二个终点</param>
     /// <param name="endCell">连接到的neighbor实例，用于获取颜色</param>
-    private void TriangulateEdgeTerraces(
-    Vector3 beginLeft, Vector3 beginRight, HexCell beginCell,
-    Vector3 endLeft, Vector3 endRight, HexCell endCell)
-    {
-        //这里先生成阶梯的第一个矩形面片。通过给定插值来计算出矩形面片的另外两个顶点
-        Vector3 v3 = HexMetrics.TerraceLerp(beginLeft, endLeft, 1);
-        Vector3 v4 = HexMetrics.TerraceLerp(beginRight, endRight, 1);
-        Color c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, 1);
+    //private void TriangulateEdgeTerraces(
+    //Vector3 beginLeft, Vector3 beginRight, HexCell beginCell,
+    //Vector3 endLeft, Vector3 endRight, HexCell endCell)
+    //{
+    //    //这里先生成阶梯的第一个矩形面片。通过给定插值来计算出矩形面片的另外两个顶点
+    //    Vector3 v3 = HexMetrics.TerraceLerp(beginLeft, endLeft, 1);
+    //    Vector3 v4 = HexMetrics.TerraceLerp(beginRight, endRight, 1);
+    //    Color c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, 1);
 
-        AddQuad(beginLeft, beginRight, v3, v4);
-        AddQuadColor(beginCell.Color, c2);
+    //    AddQuad(beginLeft, beginRight, v3, v4);
+    //    AddQuadColor(beginCell.Color, c2);
 
-        //阶梯的其他矩形面片，可以通过循环来生成
-        //旧的矩形面片终点V3 V4，就是新面片的起点 V1 V2
-        //然后再利用插值计算新面片的终点即可
-        //颜色计算同理
-        for (int i = 2; i < HexMetrics.terraceSteps; i++)
-        {
-            Vector3 v1 = v3;
-            Vector3 v2 = v4;
-            Color c1 = c2;
-            v3 = HexMetrics.TerraceLerp(beginLeft, endLeft, i);
-            v4 = HexMetrics.TerraceLerp(beginRight, endRight, i);
-            c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, i);
-            AddQuad(v1, v2, v3, v4);
-            AddQuadColor(c1, c2);
-        }
+    //    //阶梯的其他矩形面片，可以通过循环来生成
+    //    //旧的矩形面片终点V3 V4，就是新面片的起点 V1 V2
+    //    //然后再利用插值计算新面片的终点即可
+    //    //颜色计算同理
+    //    for (int i = 2; i < HexMetrics.terraceSteps; i++)
+    //    {
+    //        Vector3 v1 = v3;
+    //        Vector3 v2 = v4;
+    //        Color c1 = c2;
+    //        v3 = HexMetrics.TerraceLerp(beginLeft, endLeft, i);
+    //        v4 = HexMetrics.TerraceLerp(beginRight, endRight, i);
+    //        c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, i);
+    //        AddQuad(v1, v2, v3, v4);
+    //        AddQuadColor(c1, c2);
+    //    }
 
-        //连接阶梯的剩余区域
-        AddQuad(v3, v4, endLeft, endRight);
-        AddQuadColor(c2, endCell.Color);
-    }
+    //    //连接阶梯的剩余区域
+    //    AddQuad(v3, v4, endLeft, endRight);
+    //    AddQuadColor(c2, endCell.Color);
+    //}
 
     /// <summary>
     /// 构建三角形连接区域的方法

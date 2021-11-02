@@ -278,7 +278,7 @@ public class HexCell : MonoBehaviour
     {
         //判断当前cell是否有流出的河流
         //没有河流留出的话就直接跳出
-        if (hasOutgoingRiver == false)
+        if (!hasOutgoingRiver)
         {
             return;
         }
@@ -306,7 +306,7 @@ public class HexCell : MonoBehaviour
     {
         //思路与移除流出河流基本相同
 
-        if (hasIncomingRiver == false)
+        if (!hasIncomingRiver)
         {
             return;
         }

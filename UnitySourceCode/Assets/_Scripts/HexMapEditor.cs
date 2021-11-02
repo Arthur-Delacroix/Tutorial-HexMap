@@ -55,7 +55,7 @@ public class HexMapEditor : MonoBehaviour
     {
         //通过IsPointerOverGameObject区分点击在UI或cell上
         //IsPointerOverGameObject点击在UI上时候为true。其他为false
-        if (Input.GetMouseButtonUp(0) && !EventSystem.current.IsPointerOverGameObject())
+        if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             HandleInput();
         }

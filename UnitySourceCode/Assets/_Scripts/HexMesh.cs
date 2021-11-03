@@ -112,14 +112,14 @@ public class HexMesh : MonoBehaviour
         TriangulateEdgeFan(center, e, cell.Color);
 
         //这两个Vector3变量，是原本构成cell一个三角面片的其中两个顶点位置。现在是颜色混合区域的两个顶点位置。
-        //Vector3 v3 = center + HexMetrics.GetFirstCorner(direction);
-        //Vector3 v4 = center + HexMetrics.GetSecondCorner(direction);
+        //Vector3 v4 = center + HexMetrics.GetFirstCorner(direction);
+        //Vector3 v5 = center + HexMetrics.GetSecondCorner(direction);
 
         //颜色混合区域变为了矩形，V3和V4的位置，其实是通过V1和V2顶点分别加上矩形区域的高来计算得出的
         //具体可以查看HexMetrics.GetBridge方法的说明
         //Vector3 bridge = HexMetrics.GetBridge(direction);
-        //Vector3 v3 = v1 + bridge;
-        //Vector3 v4 = v2 + bridge;
+        //Vector3 v4 = v1 + bridge;
+        //Vector3 v5 = v2 + bridge;
         //该段代码移至 TriangulateConnection 方法中
 
         //为了增加地图的整体细节，这里在cell六边形每个边的中点上，增加一个顶点
@@ -151,7 +151,7 @@ public class HexMesh : MonoBehaviour
         //AddTriangle(center, v1, e1);
 
         //将计算好的颜色混合区域定点位置信息，添加到添加到链表中
-        //AddQuad(v1, v2, v3, v4);
+        //AddQuad(v1, v2, v4, v5);
         //该段代码移至 TriangulateConnection 方法中
 
         //因为有了HexDirection，这里不再直接使用corners枚举来获取cell的顶点位置信息，而使用HexDirection方位来获取
@@ -222,7 +222,7 @@ public class HexMesh : MonoBehaviour
         //AddTriangleColor(cell.color);
 
         //为颜色混合区域的4个顶点分别赋值颜色
-        //其中v1 v2是cell自身颜色，v3 v4是混合后的颜色
+        //其中v1 v2是cell自身颜色，v4 v4是混合后的颜色
         //AddQuadColor(
         //    cell.color,
         //    cell.color,
@@ -238,7 +238,7 @@ public class HexMesh : MonoBehaviour
 
         //组成cell的每个三角形区域，有1个矩形混色区域和2个三角形三色混合区域
         //生成其中一个三角形三色混合区域
-        //AddTriangle(v1, center + HexMetrics.GetFirstCorner(direction), v3);
+        //AddTriangle(v1, center + HexMetrics.GetFirstCorner(direction), v4);
 
         //为第一个三角形三色混合区域赋值颜色
         //自身颜色、三个相邻cell的平均色、矩形混合区域中间色
@@ -249,7 +249,7 @@ public class HexMesh : MonoBehaviour
         //    );
 
         //第二个三角形三色混合区域
-        //AddTriangle(v2, v4, center + HexMetrics.GetSecondCorner(direction));
+        //AddTriangle(v2, v5, center + HexMetrics.GetSecondCorner(direction));
 
         //第二个三角形三色混合区域的颜色
         //AddTriangleColor(
@@ -316,7 +316,7 @@ public class HexMesh : MonoBehaviour
         //在vertices链表中添加新增的顶点位置信息
         //vertices.Add(v1);
         //vertices.Add(v2);
-        //vertices.Add(v3);
+        //vertices.Add(v4);
 
         //这里的坐标变为扰动后的坐标
         vertices.Add(Perturb(v1));
@@ -362,8 +362,8 @@ public class HexMesh : MonoBehaviour
         //在vertices链表中添加新增的顶点位置信息
         //vertices.Add(v1);
         //vertices.Add(v2);
-        //vertices.Add(v3);
         //vertices.Add(v4);
+        //vertices.Add(v5);
 
         //这里的坐标变为扰动后的坐标
         vertices.Add(Perturb(v1));
@@ -472,38 +472,38 @@ public class HexMesh : MonoBehaviour
         }
 
         //参考图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/2-8-1.png
-        //先计算出颜色混合区域的高度，在通过v1 v2计算出v3 v4，这样就知道了矩形颜色混合区域的四个顶点了
+        //先计算出颜色混合区域的高度，在通过v1 v2计算出v3 v5，这样就知道了矩形颜色混合区域的四个顶点了
         Vector3 bridge = HexMetrics.GetBridge(direction);
-        //Vector3 v3 = v1 + bridge;
-        //Vector3 v4 = v2 + bridge;
+        //Vector3 v4 = v1 + bridge;
+        //Vector3 v5 = v2 + bridge;
         //这里为连接相邻cell的v3 v4顶点加上其所在cell的高度
-        //v3.y = v4.y = neighbor.Elevation * HexMetrics.elevationStep;
+        //v4.y = v5.y = neighbor.Elevation * HexMetrics.elevationStep;
 
         //这里在获取相邻cell的位置时，也是使用了扰动后的坐标位置
-        //v3.y = v4.y = neighbor.Position.y;
+        //v4.y = v5.y = neighbor.Position.y;
 
         //这里要计算与矩形连接区域相邻的，另一侧cell新增的两个顶点位置信息
-        //Vector3 e3 = Vector3.Lerp(v3, v4, 1f / 3f);
-        //Vector3 e4 = Vector3.Lerp(v3, v4, 2f / 3f);
+        //Vector3 e3 = Vector3.Lerp(v4, v5, 1f / 3f);
+        //Vector3 e4 = Vector3.Lerp(v4, v5, 2f / 3f);
 
         //先计算出两个相邻cell的高度差
         bridge.y = neighbor.Position.y - cell.Position.y;
 
         //利用高度差和第一个cell的坐标，获得连接区域另外一边的4个顶点位置
-        EdgeVertices e2 = new EdgeVertices(e1.v1 + bridge, e1.v4 + bridge);
+        EdgeVertices e2 = new EdgeVertices(e1.v1 + bridge, e1.v5 + bridge);
 
         //进行矩形颜色混合区域的三角面片构建和赋值顶点颜色
-        //AddQuad(v1, v2, v3, v4);
+        //AddQuad(v1, v2, v4, v5);
         //AddQuadColor(cell.color, neighbor.color);
         //以上方法注释掉，使用新的 TriangulateEdgeTerraces  进行替换
-        //TriangulateEdgeTerraces(v1, v2, cell, v3, v4, neighbor);
+        //TriangulateEdgeTerraces(v1, v2, cell, v4, v5, neighbor);
         //在这里新加入判断，当两个相邻cell的连接类型为Slope的时候，才会创建阶梯化连接
         if (cell.GetEdgeType(direction) == HexEdgeType.Slope)
         {
-            //TriangulateEdgeTerraces(v1, v2, cell, v3, v4, neighbor);
+            //TriangulateEdgeTerraces(v1, v2, cell, v4, v5, neighbor);
 
             //这里也使用EdgeVertices计算的顶点来构建矩形
-            //TriangulateEdgeTerraces(e1.v1, e1.v4, cell, e2.v1, e2.v4, neighbor);
+            //TriangulateEdgeTerraces(e1.v1, e1.v5, cell, e2.v1, e2.v5, neighbor);
 
             //将新的顶点信息传入构建阶梯连接区域的方法中
             TriangulateEdgeTerraces(e1, cell, e2, neighbor);
@@ -511,15 +511,15 @@ public class HexMesh : MonoBehaviour
         else
         {
             //当连接类型不为Slope的时候，连接区域是矩形的
-            //AddQuad(v1, v2, v3, v4);
+            //AddQuad(v1, v2, v4, v5);
             //AddQuadColor(cell.color, neighbor.color);
 
             //这里使用新增的顶点进行连接区域的构建
-            //AddQuad(v1, e1, v3, e3);
+            //AddQuad(v1, e1, v4, e3);
             //AddQuadColor(cell.color, neighbor.color);
             //AddQuad(e1, e2, e3, e4);
             //AddQuadColor(cell.color, neighbor.color);
-            //AddQuad(e2, v2, e4, v4);
+            //AddQuad(e2, v2, e4, v5);
             //AddQuadColor(cell.color, neighbor.color);
 
             //这里也使用EdgeVertices计算的顶点来构建矩形
@@ -539,7 +539,7 @@ public class HexMesh : MonoBehaviour
             //Vector3 v5 = v2 + HexMetrics.GetBridge(direction.Next());
 
             //这里也使用EdgeVertices计算的顶点来构建矩形
-            Vector3 v5 = e1.v4 + HexMetrics.GetBridge(direction.Next());
+            Vector3 v5 = e1.v5 + HexMetrics.GetBridge(direction.Next());
 
             //v5.y = nextNeighbor.Elevation * HexMetrics.elevationStep;
 
@@ -557,48 +557,48 @@ public class HexMesh : MonoBehaviour
                 if (cell.Elevation <= nextNeighbor.Elevation)
                 {
                     //cell1最低
-                    //TriangulateCorner(v2, cell, v4, nextNeighbor, v5, nextNeighbor);
-                    //TriangulateCorner(v2, cell, v4, neighbor, v5, nextNeighbor);
+                    //TriangulateCorner(v2, cell, v5, nextNeighbor, v5, nextNeighbor);
+                    //TriangulateCorner(v2, cell, v5, neighbor, v5, nextNeighbor);
 
                     //这里也使用EdgeVertices计算的顶点来构建矩形
-                    TriangulateCorner(e1.v4, cell, e2.v4, neighbor, v5, nextNeighbor);
+                    TriangulateCorner(e1.v5, cell, e2.v5, neighbor, v5, nextNeighbor);
                 }
                 else
                 {
                     //cell3 最低
-                    //TriangulateCorner(v5, nextNeighbor, v2, cell, v4, nextNeighbor);
-                    //TriangulateCorner(v5, nextNeighbor, v2, cell, v4, neighbor);
+                    //TriangulateCorner(v5, nextNeighbor, v2, cell, v5, nextNeighbor);
+                    //TriangulateCorner(v5, nextNeighbor, v2, cell, v5, neighbor);
 
                     //这里也使用EdgeVertices计算的顶点来构建矩形
-                    TriangulateCorner(v5, nextNeighbor, e1.v4, cell, e2.v4, neighbor);
+                    TriangulateCorner(v5, nextNeighbor, e1.v5, cell, e2.v5, neighbor);
                 }
             }
             //如果cell1>cell2，且cell2<cell3
             else if (neighbor.Elevation <= nextNeighbor.Elevation)
             {
                 //cell2最低
-                //TriangulateCorner(v4, nextNeighbor, v5, nextNeighbor, v2, cell);
-                //TriangulateCorner(v4, neighbor, v5, nextNeighbor, v2, cell);
+                //TriangulateCorner(v5, nextNeighbor, v5, nextNeighbor, v2, cell);
+                //TriangulateCorner(v5, neighbor, v5, nextNeighbor, v2, cell);
 
                 //这里也使用EdgeVertices计算的顶点来构建矩形
-                TriangulateCorner(e2.v4, neighbor, v5, nextNeighbor, e1.v4, cell);
+                TriangulateCorner(e2.v5, neighbor, v5, nextNeighbor, e1.v5, cell);
             }
             else
             {
                 //cell3最低
-                //TriangulateCorner(v5, nextNeighbor, v2, cell, v4, nextNeighbor);
-                //TriangulateCorner(v5, nextNeighbor, v2, cell, v4, neighbor);
+                //TriangulateCorner(v5, nextNeighbor, v2, cell, v5, nextNeighbor);
+                //TriangulateCorner(v5, nextNeighbor, v2, cell, v5, neighbor);
 
                 //这里也使用EdgeVertices计算的顶点来构建矩形
-                TriangulateCorner(v5, nextNeighbor, e1.v4, cell, e2.v4, neighbor);
+                TriangulateCorner(v5, nextNeighbor, e1.v5, cell, e2.v5, neighbor);
             }
 
             //v2 + HexMetrics.GetBridge(direction.Next()) 为三角形的最后一个顶点位置
             //首先通过HexMetrics.GetBridge(direction.Next()获取 相邻的第二个cell的矩形连接区域宽度，可以理解为一个向量
             //v2顶点位置再加上这个向量，得出了三角形最后一个顶点的位置
-            //AddTriangle(v2, v4, v2 + HexMetrics.GetBridge(direction.Next()));
+            //AddTriangle(v2, v5, v2 + HexMetrics.GetBridge(direction.Next()));
 
-            //AddTriangle(v2, v4, v5);
+            //AddTriangle(v2, v5, v5);
             //AddTriangleColor(cell.color, neighbor.color, nextNeighbor.color);
         }
     }
@@ -617,11 +617,11 @@ public class HexMesh : MonoBehaviour
     //Vector3 endLeft, Vector3 endRight, HexCell endCell)
     //{
     //    //这里先生成阶梯的第一个矩形面片。通过给定插值来计算出矩形面片的另外两个顶点
-    //    Vector3 v3 = HexMetrics.TerraceLerp(beginLeft, endLeft, 1);
-    //    Vector3 v4 = HexMetrics.TerraceLerp(beginRight, endRight, 1);
+    //    Vector3 v4 = HexMetrics.TerraceLerp(beginLeft, endLeft, 1);
+    //    Vector3 v5 = HexMetrics.TerraceLerp(beginRight, endRight, 1);
     //    Color c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, 1);
 
-    //    AddQuad(beginLeft, beginRight, v3, v4);
+    //    AddQuad(beginLeft, beginRight, v4, v5);
     //    AddQuadColor(beginCell.Color, c2);
 
     //    //阶梯的其他矩形面片，可以通过循环来生成
@@ -630,18 +630,18 @@ public class HexMesh : MonoBehaviour
     //    //颜色计算同理
     //    for (int i = 2; i < HexMetrics.terraceSteps; i++)
     //    {
-    //        Vector3 v1 = v3;
-    //        Vector3 v2 = v4;
+    //        Vector3 v1 = v4;
+    //        Vector3 v2 = v5;
     //        Color c1 = c2;
-    //        v3 = HexMetrics.TerraceLerp(beginLeft, endLeft, i);
-    //        v4 = HexMetrics.TerraceLerp(beginRight, endRight, i);
+    //        v4 = HexMetrics.TerraceLerp(beginLeft, endLeft, i);
+    //        v5 = HexMetrics.TerraceLerp(beginRight, endRight, i);
     //        c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, i);
-    //        AddQuad(v1, v2, v3, v4);
+    //        AddQuad(v1, v2, v4, v5);
     //        AddQuadColor(c1, c2);
     //    }
 
     //    //连接阶梯的剩余区域
-    //    AddQuad(v3, v4, endLeft, endRight);
+    //    AddQuad(v4, v5, endLeft, endRight);
     //    AddQuadColor(c2, endCell.Color);
     //}
 
@@ -965,9 +965,15 @@ public class HexMesh : MonoBehaviour
     {
         AddTriangle(center, edge.v1, edge.v2);
         AddTriangleColor(color);
+        //AddTriangle(center, edge.v2, edge.v4);
+        //AddTriangleColor(color);
+        //加入了新的顶点信息
         AddTriangle(center, edge.v2, edge.v3);
         AddTriangleColor(color);
         AddTriangle(center, edge.v3, edge.v4);
+        AddTriangleColor(color);
+
+        AddTriangle(center, edge.v4, edge.v5);
         AddTriangleColor(color);
     }
 
@@ -982,9 +988,15 @@ public class HexMesh : MonoBehaviour
     {
         AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
         AddQuadColor(c1, c2);
+        //AddQuad(e1.v2, e1.v4, e2.v2, e2.v4);
+        //AddQuadColor(c1, c2);
+        //添加了新的顶点信息
         AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
         AddQuadColor(c1, c2);
         AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
+        AddQuadColor(c1, c2);
+
+        AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
         AddQuadColor(c1, c2);
     }
 }

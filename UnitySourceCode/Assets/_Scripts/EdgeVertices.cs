@@ -3,7 +3,7 @@
 public struct EdgeVertices
 {
     //4个顺时针排列在六边形一条边上的顶点
-    public Vector3 v1, v2, v3, v4;
+    public Vector3 v1, v2, v3, v4, v5;
 
     /// <summary>
     /// 通过六边形一条边上，边缘的两个顶点，计算出中间的两个点的位置
@@ -13,9 +13,13 @@ public struct EdgeVertices
     public EdgeVertices(Vector3 corner1, Vector3 corner2)
     {
         v1 = corner1;
-        v2 = Vector3.Lerp(corner1, corner2, 1f / 3f);
-        v3 = Vector3.Lerp(corner1, corner2, 2f / 3f);
-        v4 = corner2;
+        //v2 = Vector3.Lerp(corner1, corner2, 1f / 3f);
+        //v4 = Vector3.Lerp(corner1, corner2, 2f / 3f);
+        //添加了新的v3顶点，其左右相邻的顶点位置也要相应的改变
+        v2 = Vector3.Lerp(corner1, corner2, 0.25f);
+        v3 = Vector3.Lerp(corner1, corner2, 0.5f);
+        v4 = Vector3.Lerp(corner1, corner2, 0.75f);
+        v5 = corner2;
     }
 
     /// <summary>
@@ -30,8 +34,10 @@ public struct EdgeVertices
         EdgeVertices result;
         result.v1 = HexMetrics.TerraceLerp(a.v1, b.v1, step);
         result.v2 = HexMetrics.TerraceLerp(a.v2, b.v2, step);
+        //添加了新的v3顶点
         result.v3 = HexMetrics.TerraceLerp(a.v3, b.v3, step);
         result.v4 = HexMetrics.TerraceLerp(a.v4, b.v4, step);
+        result.v5 = HexMetrics.TerraceLerp(a.v5, b.v5, step);
         return result;
     }
 }

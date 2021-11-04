@@ -57,6 +57,9 @@ public static class HexMetrics
     public const int chunkSizeX = 5;
     public const int chunkSizeZ = 5;
 
+    //河道最低点的偏移量
+    public const float streamBedElevationOffset = -1f;
+
     //正六边形的六个顶点位置，其姿态为角朝上，从最上面一个顶点开始计算位置
     //根据正六边形中点的位置，顺时针依次定义6个顶点的位置
     private static Vector3[] corners =

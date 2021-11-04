@@ -106,6 +106,16 @@ public class HexCell : MonoBehaviour
         }
     }
 
+    //河床最低点的高度
+    public float StreamBedY
+    {
+        get
+        {
+            //通过偏移常量，计算出当前cell对应河床顶点的实际高度
+            return (elevation + HexMetrics.streamBedElevationOffset) * HexMetrics.elevationStep;
+        }
+    }
+
     /// <summary>
     /// 用来获取neighbors中相应方位cell的实例
     /// 这里注意，虽然HexDirection取值为0-5，neighbors长度为6，不会越界

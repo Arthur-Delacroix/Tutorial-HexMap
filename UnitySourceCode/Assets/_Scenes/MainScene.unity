@@ -4892,6 +4892,8 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   hexGrid: {fileID: 1119327824}
   mainCamera: {fileID: 963194227}
+  elevationText: {fileID: 539001487}
+  brushSizeText: {fileID: 1334344518}
 --- !u!1 &2012684204
 GameObject:
   m_ObjectHideFlags: 0

@@ -108,6 +108,13 @@ public class HexMesh : MonoBehaviour
             center + HexMetrics.GetSecondSolidCorner(direction)
         );
 
+        //检测当前边缘是否有河流穿过
+        if (cell.HasRiverThroughEdge(direction))
+        {
+            //如果有河流穿过，就降低中间顶点的高度，使其成为河床最低点
+            e.v3.y = cell.StreamBedY;
+        }
+
         //在计算出各个点的位置信息后，直接构建三角面片
         TriangulateEdgeFan(center, e, cell.Color);
 
@@ -491,6 +498,12 @@ public class HexMesh : MonoBehaviour
 
         //利用高度差和第一个cell的坐标，获得连接区域另外一边的4个顶点位置
         EdgeVertices e2 = new EdgeVertices(e1.v1 + bridge, e1.v5 + bridge);
+
+        //使得相邻地图单元的中间顶点坐标也下降到河床最低点位置，不然会有破面产生
+        if (cell.HasRiverThroughEdge(direction))
+        {
+            e2.v3.y = neighbor.StreamBedY;
+        }
 
         //进行矩形颜色混合区域的三角面片构建和赋值顶点颜色
         //AddQuad(v1, v2, v4, v5);

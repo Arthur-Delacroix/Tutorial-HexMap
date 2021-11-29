@@ -108,15 +108,24 @@ public class HexMesh : MonoBehaviour
             center + HexMetrics.GetSecondSolidCorner(direction)
         );
 
-        //检测当前边缘是否有河流穿过
-        if (cell.HasRiverThroughEdge(direction))
+        if (cell.HasRiver)
         {
-            //如果有河流穿过，就降低中间顶点的高度，使其成为河床最低点
-            e.v3.y = cell.StreamBedY;
-        }
+            //检测当前边缘是否有河流穿过
+            if (cell.HasRiverThroughEdge(direction))
+            {
+                //如果有河流穿过，就降低中间顶点的高度，使其成为河床最低点
+                e.v3.y = cell.StreamBedY;
 
-        //在计算出各个点的位置信息后，直接构建三角面片
-        TriangulateEdgeFan(center, e, cell.Color);
+                //使用带河流的构建方式
+                TriangulateWithRiver(direction, cell, center, e);
+            }
+        }
+        else
+        {
+            //在计算出各个点的位置信息后，直接构建三角面片
+            //这个是不带河流的构建方式
+            TriangulateEdgeFan(center, e, cell.Color);
+        }
 
         //这两个Vector3变量，是原本构成cell一个三角面片的其中两个顶点位置。现在是颜色混合区域的两个顶点位置。
         //Vector3 v4 = center + HexMetrics.GetFirstCorner(direction);
@@ -1011,5 +1020,18 @@ public class HexMesh : MonoBehaviour
 
         AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
         AddQuadColor(c1, c2);
+    }
+
+    /// <summary>
+    /// 当cell中有河流的时候，使用这个方法来进行构建
+    /// 参考图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/6-13-1.png
+    /// </summary>
+    /// <param name="direction">河流方向</param>
+    /// <param name="cell">cell这身实例</param>
+    /// <param name="center">cell中心点实际位置</param>
+    /// <param name="e">河流穿过的这个边，在这条边上所有的顶点的位置信息</param>
+    private void TriangulateWithRiver(HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e)
+    {
+
     }
 }

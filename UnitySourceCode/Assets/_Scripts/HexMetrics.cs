@@ -39,7 +39,7 @@ public static class HexMetrics
     //扰动强度
     //这个值是一个坐标点在每个轴向上的偏移强度
     //最大偏移量就是 √￣(3*5^2) ≈ 8.66
-    public const float cellPerturbStrength = 4f;
+    public const float cellPerturbStrength = 0f;//4f;
 
     //采样缩放
     //这个参数的实际作用，就是将时间空间内坐标缩小一定倍率

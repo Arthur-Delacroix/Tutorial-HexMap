@@ -428,6 +428,18 @@ public class HexMesh : MonoBehaviour
         colors.Add(c2);
     }
 
+    /// <summary>
+    /// 使用一个颜色值构建四边形区域，河道在cell中心时候用到
+    /// </summary>
+    /// <param name="color">cell自身的颜色值</param>
+    private void AddQuadColor(Color color)
+    {
+        colors.Add(color);
+        colors.Add(color);
+        colors.Add(color);
+        colors.Add(color);
+    }
+
 
     /// <summary>
     /// 构建阶梯状连接区域
@@ -1032,6 +1044,48 @@ public class HexMesh : MonoBehaviour
     /// <param name="e">河流穿过的这个边，在这条边上所有的顶点的位置信息</param>
     private void TriangulateWithRiver(HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e)
     {
+        //河流宽度为二分之一cell边长，又已知边长与外接圆半径(cell外径outerRadius)相同
+        //为了保持河道在cell中央的时候不会变形，且没有破面等现象产生
+        //所以要将当前河流穿过区域左右两侧的外径，之前顶点与中心重合，现在变为各自距离中心四分之一处
+        Vector3 centerL = center + HexMetrics.GetFirstSolidCorner(direction.Previous()) * 0.25f;
+        Vector3 centerR = center + HexMetrics.GetSecondSolidCorner(direction.Next()) * 0.25f;
 
+        //根据两侧新的顶点位置，计算出其余顶点的位置
+        //EdgeVertices m = new EdgeVertices(
+        //    Vector3.Lerp(centerL, e.v1, 0.5f),
+        //    Vector3.Lerp(centerR, e.v5, 0.5f)
+        //);
+
+        //这里使用新的顶点计算方式，关键是两侧顶点的偏移量
+        //参考图 http://magi-melchiorl.gitee.io/pages/Pics/Hexmap/6-14-2.png
+        //注意梯形中位线部分，中间河道为 1/4+1/4，只看左侧顶点偏移，为1/4的一半，也就是1/8
+        //并且中位线是底边长的3/4，以中位线为计算基础，左右两个顶点其实各偏移了中位线的6/1
+        //可以这么理解： 1/4 + 1/4 + (1/8 +1/8) 这是中位线宽度，其中的1/4其实是中位线的1/3、而一侧偏移量是1/8，也就是中位线的1/6
+        EdgeVertices m = new EdgeVertices(
+            Vector3.Lerp(centerL, e.v1, 0.5f),
+            Vector3.Lerp(centerR, e.v5, 0.5f),
+            1f / 6f
+        );
+
+        //将河道中心的顶点高度下降
+        m.v3.y = center.y = e.v3.y;
+
+        //通过计算后的顶点构建连接区域
+        TriangulateEdgeStrip(m, cell.Color, e, cell.Color);
+
+        //之前构建的是梯形中位线到底边的部分
+        //这里构建中位线到顶边的部分
+        //由于之前所有方法均不适用于这里，所以手动添加顶点
+        //首先构建河道两侧三角形区域
+        AddTriangle(centerL, m.v1, m.v2);
+        AddTriangleColor(cell.Color);
+        AddTriangle(centerR, m.v4, m.v5);
+        AddTriangleColor(cell.Color);
+
+        //构建河道中央两个四边形
+        AddQuad(centerL, center, m.v2, m.v3);
+        AddQuadColor(cell.Color);
+        AddQuad(center, centerR, m.v3, m.v4);
+        AddQuadColor(cell.Color);
     }
 }

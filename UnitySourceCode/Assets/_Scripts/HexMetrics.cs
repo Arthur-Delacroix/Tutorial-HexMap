@@ -96,20 +96,20 @@ public static class HexMetrics
     }
 
     /// <summary>
-    /// 获取cell自身颜色区域的direction位置的顶点
+    /// 获取cell自身颜色区域的 direction方位上顶点的实际位置
     /// </summary>
     /// <param name="direction">顶点方位</param>
-    /// <returns></returns>
+    /// <returns>direction方位上顶点的实际位置</returns>
     public static Vector3 GetFirstSolidCorner(HexDirection direction)
     {
         return corners[(int)direction] * solidFactor;
     }
 
     /// <summary>
-    /// 获取cell自身颜色区域的direction+1位置的顶点
+    /// 获取cell自身颜色区域的 direction+1方位上顶点的实际位置
     /// </summary>
     /// <param name="direction">顶点方位</param>
-    /// <returns></returns>
+    /// <returns>direction+1方位上顶点的实际位置</returns>
     public static Vector3 GetSecondSolidCorner(HexDirection direction)
     {
         return corners[(int)direction + 1] * solidFactor;

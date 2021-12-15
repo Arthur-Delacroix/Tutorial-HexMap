@@ -117,7 +117,18 @@ public class HexMesh : MonoBehaviour
                 e.v3.y = cell.StreamBedY;
 
                 //使用带河流的构建方式
-                TriangulateWithRiver(direction, cell, center, e);
+                //TriangulateWithRiver(direction, cell, center, e);
+
+                //检测是否为河流的起点或者终点
+                //如果是起点或终点，那就使用特殊的方法构建
+                if (cell.HasRiverBeginOrEnd)
+                {
+                    TriangulateWithRiverBeginOrEnd(direction, cell, center, e);
+                }
+                else
+                {
+                    TriangulateWithRiver(direction, cell, center, e);
+                }
             }
         }
         else
@@ -990,10 +1001,10 @@ public class HexMesh : MonoBehaviour
     }
 
     /// <summary>
-    /// 对cell的六边形其中一个三角面片进行细分，细分为3个三角面片
+    /// 使用计算好的5个顶点，对cell的六边形其中一个三角面片进行细分
     /// </summary>
     /// <param name="center">cell中心点位置</param>
-    /// <param name="edge">一条边上细分后的4个顶点信息</param>
+    /// <param name="edge">一条边上细分后的5个顶点信息</param>
     /// <param name="color">cell的颜色</param>
     private void TriangulateEdgeFan(Vector3 center, EdgeVertices edge, Color color)
     {
@@ -1087,5 +1098,30 @@ public class HexMesh : MonoBehaviour
         AddQuadColor(cell.Color);
         AddQuad(center, centerR, m.v3, m.v4);
         AddQuadColor(cell.Color);
+    }
+
+    /// <summary>
+    /// 构建河流起点或终点的cell
+    /// </summary>
+    /// <param name="direction">河流进入或者流出的方向</param>
+    /// <param name="cell">cell自身实例</param>
+    /// <param name="center"></param>
+    /// <param name="e"></param>
+    private void TriangulateWithRiverBeginOrEnd(HexDirection direction, HexCell cell, Vector3 center, EdgeVertices e)
+    {
+        //计算中位线上的5个顶点位置
+        //这里注意，由于是河流的终点或起点，所以河流整体是向内聚拢的，5个顶点对中位线进行等分
+        EdgeVertices m = new EdgeVertices(
+            Vector3.Lerp(center, e.v1, 0.5f),
+            Vector3.Lerp(center, e.v5, 0.5f)
+        );
+
+        //依然保持河道高度
+        m.v3.y = e.v3.y;
+
+        //构建中位线到cell边缘的梯形，这里是由4个矩形组成的，跟连接区域类似，所以使用了构建连接区域的方法
+        TriangulateEdgeStrip(m, cell.Color, e, cell.Color);
+        //构建顶点到中位线的区域
+        TriangulateEdgeFan(center, m, cell.Color);
     }
 }

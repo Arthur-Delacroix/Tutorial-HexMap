@@ -1058,8 +1058,42 @@ public class HexMesh : MonoBehaviour
         //河流宽度为二分之一cell边长，又已知边长与外接圆半径(cell外径outerRadius)相同
         //为了保持河道在cell中央的时候不会变形，且没有破面等现象产生
         //所以要将当前河流穿过区域左右两侧的外径，之前顶点与中心重合，现在变为各自距离中心四分之一处
-        Vector3 centerL = center + HexMetrics.GetFirstSolidCorner(direction.Previous()) * 0.25f;
-        Vector3 centerR = center + HexMetrics.GetSecondSolidCorner(direction.Next()) * 0.25f;
+        //Vector3 centerL = center + HexMetrics.GetFirstSolidCorner(direction.Previous()) * 0.25f;
+        //Vector3 centerR = center + HexMetrics.GetSecondSolidCorner(direction.Next()) * 0.25f;
+
+
+        Vector3 centerL, centerR;
+        //这里将河道情况分开讨论了
+        //1 笔直穿过cell的河道
+        //2 出入口相邻的河道
+        //3 出入口间隔一条边的河道
+        if (cell.HasRiverThroughEdge(direction.Opposite()))//先判断是否是笔直穿过
+        {
+            centerL = center + HexMetrics.GetFirstSolidCorner(direction.Previous()) * 0.25f;
+            centerR = center + HexMetrics.GetSecondSolidCorner(direction.Next()) * 0.25f;
+        }
+        else if (cell.HasRiverThroughEdge(direction.Next()))//出入口相邻的河道 出口在下面
+        {
+            centerL = center;
+            //centerR = Vector3.Lerp(center, e.v5, 0.5f);
+            //虽然河道宽度一直没有改变，但是因为弯道造成了一种挤压感
+            //这里将弯道内侧的顶点偏移量减小，环节视觉上的挤压感
+            centerR = Vector3.Lerp(center, e.v5, 2f / 3f);
+        }
+        else if (cell.HasRiverThroughEdge(direction.Previous()))//出入口相邻的河道 出口在上面
+        {
+            //centerL = Vector3.Lerp(center, e.v1, 0.5f);
+            centerL = Vector3.Lerp(center, e.v1, 2f / 3f);
+            centerR = center;
+        }
+        else
+        {
+            //如果不是笔直的河道，就将河流端点聚拢在cell中心
+            centerL = centerR = center;
+        }
+
+        //重新计算cell中心点的位置，让其偏离河道弯折处，这样河道在转弯的地方就不会显得狭窄了
+        center = Vector3.Lerp(centerL, centerR, 0.5f);
 
         //根据两侧新的顶点位置，计算出其余顶点的位置
         //EdgeVertices m = new EdgeVertices(
